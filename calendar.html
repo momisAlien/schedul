@@ -208,6 +208,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg1);color:var(--tx1);min-h
 <div class="mdf"><div class="mfl"><button class="btn bd" id="delBtn" style="display:none">삭제</button></div><div class="mfr"><button class="btn bs" id="canBtn">취소</button><button class="btn bp" id="savBtn">저장</button></div></div>
 </div>
 </div>
+<script>
 const dot=document.getElementById('cursorDot'),cvs=document.getElementById('particleCanvas'),ctx=cvs.getContext('2d');
 let mx=-100,my=-100,pmx=-100,pmy=-100,vx=0,vy=0,hovered=false;
 function resizeCvs(){cvs.width=window.innerWidth;cvs.height=window.innerHeight}
