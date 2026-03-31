@@ -11,9 +11,9 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',sans-serif;background:var(--bg1);color:var(--tx1);min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s;cursor:none}
 ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bd1);border-radius:3px}
-.cursor{position:fixed;width:20px;height:20px;border-radius:50%;background:var(--ac1);opacity:.5;pointer-events:none;z-index:9999;transition:transform .15s ease,width .2s,height .2s,opacity .2s;transform:translate(-50%,-50%);mix-blend-mode:screen}
-.cursor-glow{position:fixed;width:40px;height:40px;border-radius:50%;background:radial-gradient(circle,var(--glow) 0%,transparent 70%);pointer-events:none;z-index:9998;transition:transform .3s ease;transform:translate(-50%,-50%)}
-.cursor.hover{width:32px;height:32px;opacity:.3}
+#particleCanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999}
+.cursor-dot{position:fixed;width:8px;height:8px;border-radius:50%;background:var(--ac1);pointer-events:none;z-index:10000;transform:translate(-50%,-50%);transition:width .25s,height .25s,background .25s;box-shadow:0 0 12px var(--glow)}
+.cursor-dot.hover{width:14px;height:14px;background:var(--ac2);box-shadow:0 0 20px var(--glow),0 0 40px var(--ac1g)}
 .app{display:flex;flex-direction:column;height:100vh;max-width:1400px;margin:0 auto;padding:16px;gap:12px;cursor:none}
 .app *{cursor:none}
 .hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:var(--bg2);border:1px solid var(--bd1);border-radius:var(--r3);flex-shrink:0;box-shadow:var(--sh1);transition:background .3s}
@@ -150,8 +150,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg1);color:var(--tx1);min-h
 </style>
 </head>
 <body>
-<div class="cursor" id="cursor"></div>
-<div class="cursor-glow" id="cursorGlow"></div>
+<canvas id="particleCanvas"></canvas>
+<div class="cursor-dot" id="cursorDot"></div>
 <div class="app">
 <header class="hdr">
 <div class="hdr-l">
@@ -208,13 +208,115 @@ body{font-family:'Inter',sans-serif;background:var(--bg1);color:var(--tx1);min-h
 <div class="mdf"><div class="mfl"><button class="btn bd" id="delBtn" style="display:none">삭제</button></div><div class="mfr"><button class="btn bs" id="canBtn">취소</button><button class="btn bp" id="savBtn">저장</button></div></div>
 </div>
 </div>
-<script>
-const cur=document.getElementById('cursor'),curG=document.getElementById('cursorGlow');
-let mx=0,my=0,cx=0,cy=0;
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px'});
-function animCur(){cx+=(mx-cx)*.12;cy+=(my-cy)*.12;curG.style.left=cx+'px';curG.style.top=cy+'px';requestAnimationFrame(animCur)}
-animCur();
-document.addEventListener('mouseover',e=>{if(e.target.closest('button,.ep,.span-bar,.we,.de,.co,.dc,.nb,.vt,.abtn,.tbtn,.theme-btn,.tgs,.ev-card,.ev-card-btn'))cur.classList.add('hover');else cur.classList.remove('hover')});
+const dot=document.getElementById('cursorDot'),cvs=document.getElementById('particleCanvas'),ctx=cvs.getContext('2d');
+let mx=-100,my=-100,pmx=-100,pmy=-100,vx=0,vy=0,hovered=false;
+function resizeCvs(){cvs.width=window.innerWidth;cvs.height=window.innerHeight}
+resizeCvs();window.addEventListener('resize',resizeCvs);
+document.addEventListener('mousemove',e=>{pmx=mx;pmy=my;mx=e.clientX;my=e.clientY;vx=mx-pmx;vy=my-pmy;dot.style.left=mx+'px';dot.style.top=my+'px'});
+document.addEventListener('mouseleave',()=>{mx=-200;my=-200});
+document.addEventListener('mouseover',e=>{const h=!!e.target.closest('button,.ep,.span-bar,.we,.de,.co,.dc,.nb,.vt,.abtn,.tbtn,.theme-btn,.tgs,.ev-card,.ev-card-btn');hovered=h;dot.classList.toggle('hover',h)});
+
+// Particle system
+const PCOUNT=80,particles=[];
+const palette=['108,92,231','162,155,254','253,121,168','116,185,255','0,206,201','225,112,85'];
+class Particle{
+  constructor(){this.reset()}
+  reset(){
+    this.x=Math.random()*cvs.width;this.y=Math.random()*cvs.height;
+    this.baseSize=Math.random()*2.5+1;this.size=this.baseSize;
+    this.speedX=(Math.random()-.5)*.4;this.speedY=(Math.random()-.5)*.4;
+    this.color=palette[Math.floor(Math.random()*palette.length)];
+    this.alpha=Math.random()*.4+.1;this.baseAlpha=this.alpha;
+    this.angle=Math.random()*Math.PI*2;this.orbitSpeed=Math.random()*.02+.005;
+    this.attractDist=Math.random()*120+80;this.life=1;
+    this.trail=[];this.maxTrail=Math.floor(Math.random()*6)+3;
+  }
+  update(){
+    const dx=mx-this.x,dy=my-this.y,dist=Math.sqrt(dx*dx+dy*dy);
+    const spd=Math.sqrt(vx*vx+vy*vy);
+    // Attraction & orbit around cursor
+    if(dist<280){
+      const force=Math.max(0,(280-dist)/280);
+      this.angle+=this.orbitSpeed*(1+force*2);
+      const targetR=this.attractDist*(0.4+force*0.6);
+      const targetX=mx+Math.cos(this.angle)*targetR;
+      const targetY=my+Math.sin(this.angle)*targetR;
+      // Wave displacement based on cursor velocity
+      const wave=Math.sin(this.angle*3+Date.now()*.003)*spd*.3;
+      this.x+=(targetX-this.x)*.04+vx*.02+wave*.1;
+      this.y+=(targetY-this.y)*.04+vy*.02+wave*.1;
+      this.size=this.baseSize*(1+force*1.8);
+      this.alpha=Math.min(1,this.baseAlpha+force*.6);
+    }else{
+      // Gentle ambient drift
+      this.x+=this.speedX+Math.sin(Date.now()*.001+this.angle)*.15;
+      this.y+=this.speedY+Math.cos(Date.now()*.0012+this.angle)*.15;
+      this.size+=(this.baseSize-this.size)*.05;
+      this.alpha+=(this.baseAlpha-this.alpha)*.05;
+    }
+    // Trail
+    this.trail.push({x:this.x,y:this.y,s:this.size,a:this.alpha});
+    if(this.trail.length>this.maxTrail)this.trail.shift();
+    // Wrap edges
+    if(this.x<-20)this.x=cvs.width+10;if(this.x>cvs.width+20)this.x=-10;
+    if(this.y<-20)this.y=cvs.height+10;if(this.y>cvs.height+20)this.y=-10;
+  }
+  draw(){
+    // Draw trail
+    for(let i=0;i<this.trail.length;i++){
+      const t=this.trail[i],prog=i/this.trail.length;
+      ctx.beginPath();ctx.arc(t.x,t.y,t.s*prog*.5,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${this.color},${t.a*prog*.3})`;ctx.fill();
+    }
+    // Main particle
+    ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${this.color},${this.alpha})`;ctx.fill();
+    // Glow
+    ctx.beginPath();ctx.arc(this.x,this.y,this.size*2.5,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${this.color},${this.alpha*.15})`;ctx.fill();
+  }
+}
+for(let i=0;i<PCOUNT;i++)particles.push(new Particle());
+
+// Connection lines between nearby particles
+function drawConnections(){
+  for(let i=0;i<particles.length;i++){
+    for(let j=i+1;j<particles.length;j++){
+      const a=particles[i],b=particles[j];
+      const dx=a.x-b.x,dy=a.y-b.y,dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist<100){
+        const dxM=mx-(a.x+b.x)/2,dyM=my-(a.y+b.y)/2,distM=Math.sqrt(dxM*dxM+dyM*dyM);
+        if(distM<200){
+          const op=Math.max(0,(100-dist)/100*(200-distM)/200)*.2;
+          ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);
+          ctx.strokeStyle=`rgba(${a.color},${op})`;ctx.lineWidth=.5;ctx.stroke();
+        }
+      }
+    }
+  }
+}
+
+// Cursor glow on canvas
+function drawCursorGlow(){
+  if(mx<0)return;
+  const spd=Math.sqrt(vx*vx+vy*vy);
+  const r=30+spd*1.5;
+  const grad=ctx.createRadialGradient(mx,my,0,mx,my,r);
+  grad.addColorStop(0,'rgba(108,92,231,0.15)');
+  grad.addColorStop(0.5,'rgba(162,155,254,0.05)');
+  grad.addColorStop(1,'rgba(108,92,231,0)');
+  ctx.beginPath();ctx.arc(mx,my,r,0,Math.PI*2);ctx.fillStyle=grad;ctx.fill();
+}
+
+function animParticles(){
+  ctx.clearRect(0,0,cvs.width,cvs.height);
+  drawCursorGlow();
+  particles.forEach(p=>{p.update();p.draw()});
+  drawConnections();
+  vx*=.9;vy*=.9;
+  requestAnimationFrame(animParticles);
+}
+animParticles();
 
 const COLORS=['#6c5ce7','#00cec9','#e17055','#fdcb6e','#e84393','#0984e3','#00b894','#d63031','#a29bfe','#636e72','#fd79a8','#55efc4','#fab1a0','#74b9ff'];
 const CATNAMES={work:'업무',personal:'개인',health:'건강',study:'학습',social:'사교',other:'기타'};
