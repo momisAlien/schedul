@@ -147,32 +147,25 @@ body{font-family:'Inter',sans-serif;background:var(--bg1);color:var(--tx1);min-h
 .bs{background:var(--bg3);color:var(--tx2);border:1px solid var(--bd1)}.bs:hover{background:var(--bg4);color:var(--tx1)}
 .bd{background:transparent;color:#e17055;padding:10px 14px;border-radius:20px;border:none}.bd:hover{background:rgba(225,112,85,.12)}
 .mfl{display:flex}.mfr{display:flex;gap:8px}
-@media(max-width:900px){
-.app{padding:8px;gap:6px}
-.hdr{padding:10px 14px;gap:8px;flex-wrap:wrap}
-.hdr-l{width:100%;gap:10px}
-.hdr-r{width:100%;justify-content:center}
-.main{flex-direction:column;overflow-y:auto}
-.dpanel{position:fixed;bottom:0;left:0;right:0;width:100%!important;max-height:55vh;z-index:500;border-radius:20px 20px 0 0;box-shadow:0 -4px 30px rgba(0,0,0,.5);transform:translateY(0);transition:transform .3s}
-.dpanel.hidden{transform:translateY(100%);pointer-events:none;opacity:0}
-}
-@media(max-width:600px){
+@media(max-width:768px){
 .app{padding:6px;gap:4px}
 /* Header: logo left, today right, nav center below */
-.hdr{display:grid;grid-template-columns:auto 1fr auto;grid-template-rows:auto auto;gap:6px 8px;padding:8px 12px;align-items:center}
+.hdr{display:grid;grid-template-columns:auto 1fr auto;grid-template-rows:auto auto;gap:4px 6px;padding:8px 12px;align-items:center}
 .hdr-l{display:contents}
 .logo{grid-column:1;grid-row:1;font-size:18px;letter-spacing:2px}
 .nav{grid-column:1/-1;grid-row:2;display:flex;align-items:center;justify-content:center;gap:6px}
 .nb{width:32px;height:32px;font-size:16px}
-.cdate{font-size:16px;min-width:120px}
-.tbtn{grid-column:3;grid-row:1;padding:6px 14px;font-size:12px;order:0}
-.hdr-r{grid-column:2;grid-row:1;display:flex;justify-content:flex-end;gap:6px}
+.cdate{font-size:15px;min-width:auto}
+.tbtn{grid-column:3;grid-row:1;padding:6px 14px;font-size:12px}
+.hdr-r{grid-column:2;grid-row:1;display:flex;justify-content:flex-end;gap:4px}
 .vtabs{border-radius:16px;padding:2px}
 .vt{padding:5px 10px;font-size:11px;border-radius:14px}
-.theme-btn{width:32px;height:32px;font-size:15px}
-.abtn{padding:6px 12px;font-size:12px;border-radius:16px}
+.theme-btn{width:30px;height:30px;font-size:14px}
+.abtn{padding:5px 10px;font-size:11px;border-radius:14px}
 .abtn span{display:none}
 /* Calendar grid */
+.main{flex-direction:column;overflow-y:auto}
+.cal{border-radius:var(--r2)}
 .wkc{padding:6px 2px;font-size:9px;letter-spacing:.5px}
 .dc{padding:2px 3px}
 .dn{width:22px;height:22px;font-size:10px;margin-bottom:1px}
@@ -185,7 +178,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg1);color:var(--tx1);min-h
 .mdt{font-size:17px}
 .fr{grid-template-columns:1fr}
 /* Panel as bottom sheet */
-.dpanel{border-radius:16px 16px 0 0;max-height:50vh}
+.dpanel{position:fixed;bottom:0;left:0;right:0;width:100%!important;max-height:50vh;z-index:500;border-radius:16px 16px 0 0;box-shadow:0 -4px 30px rgba(0,0,0,.5);transform:translateY(0);transition:transform .3s}
+.dpanel.hidden{transform:translateY(100%);pointer-events:none;opacity:0}
 .dp-hdr{padding:12px 16px}
 .dp-title{font-size:16px}
 .dp-body{padding:8px 10px}
@@ -204,8 +198,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg1);color:var(--tx1);min-h
 <button class="nb" id="prev">‹</button>
 <div class="cdate" id="cdate"></div>
 <button class="nb" id="next">›</button>
-<button class="tbtn" id="todB">오늘</button>
 </div>
+<button class="tbtn" id="todB">오늘</button>
 </div>
 <div class="hdr-r">
 <div class="vtabs">
@@ -264,7 +258,7 @@ document.addEventListener('touchend',()=>{mx=-200;my=-200});
 document.addEventListener('mouseover',e=>{const h=!!e.target.closest('button,.ep,.span-bar,.we,.de,.co,.dc,.nb,.vt,.abtn,.tbtn,.theme-btn,.tgs,.ev-card,.ev-card-btn');hovered=h;dot.classList.toggle('hover',h)});
 
 // Particle system — responsive
-const isMobile=window.innerWidth<=600;
+const isMobile=window.innerWidth<=768;
 const PCOUNT=isMobile?20:80;
 const particles=[];
 const palette=['108,92,231','162,155,254','253,121,168','116,185,255','0,206,201','225,112,85'];
