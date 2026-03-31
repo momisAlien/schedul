@@ -147,6 +147,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg1);color:var(--tx1);min-h
 .bs{background:var(--bg3);color:var(--tx2);border:1px solid var(--bd1)}.bs:hover{background:var(--bg4);color:var(--tx1)}
 .bd{background:transparent;color:#e17055;padding:10px 14px;border-radius:20px;border:none}.bd:hover{background:rgba(225,112,85,.12)}
 .mfl{display:flex}.mfr{display:flex;gap:8px}
+.auth-area{display:flex;align-items:center;gap:6px}
+.login-btn{padding:6px 14px;background:linear-gradient(135deg,#4285f4,#34a853);color:#fff;border:none;border-radius:18px;font-size:12px;font-weight:600;transition:var(--tr);font-family:inherit;cursor:pointer;white-space:nowrap}
+.login-btn:hover{box-shadow:0 4px 16px rgba(66,133,244,.4);transform:translateY(-1px)}
+.user-avatar{width:26px;height:26px;border-radius:50%;border:2px solid var(--ac1)}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:#00b894;display:inline-block;animation:ps 2s infinite}
+.logout-btn{padding:4px 10px;background:var(--bg3);color:var(--tx2);border:1px solid var(--bd1);border-radius:14px;font-size:10px;font-weight:600;transition:var(--tr);font-family:inherit;cursor:pointer}.logout-btn:hover{background:var(--bg4)}
+@keyframes ps{0%,100%{opacity:1}50%{opacity:.4}}
 @media(max-width:768px){
 .app{padding:6px;gap:4px}
 /* Header: logo left, today right, nav center below */
@@ -163,6 +170,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg1);color:var(--tx1);min-h
 .theme-btn{width:30px;height:30px;font-size:14px}
 .abtn{padding:5px 10px;font-size:11px;border-radius:14px}
 .abtn span{display:none}
+.auth-area .login-btn{padding:4px 10px;font-size:10px}
+.auth-area .logout-btn{font-size:9px;padding:3px 7px}
+.auth-area .user-avatar{width:22px;height:22px}
 /* Calendar grid */
 .main{flex-direction:column;overflow-y:auto}
 .cal{border-radius:var(--r2)}
@@ -186,6 +196,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg1);color:var(--tx1);min-h
 .dp-add{margin:6px 10px 10px}
 }
 </style>
+<script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 <canvas id="particleCanvas"></canvas>
@@ -202,6 +215,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg1);color:var(--tx1);min-h
 <button class="tbtn" id="todB">오늘</button>
 </div>
 <div class="hdr-r">
+<div class="auth-area" id="authArea"></div>
 <div class="vtabs">
 <button class="vt on" data-v="month">월</button>
 <button class="vt" data-v="week">주</button>
@@ -373,8 +387,29 @@ const CC={work:'#6c5ce7',personal:'#00cec9',health:'#e17055',study:'#fdcb6e',soc
 const S={cur:new Date(),view:'month',evts:[],editId:null,cat:'work',selDate:null};
 const DN=['일','월','화','수','목','금','토'],MN=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
 
+// Firebase
+const fbCfg={apiKey:"AIzaSyBv3uZN-yL_xfbWLZ4KkjRXYWI2OT_JDR8",authDomain:"scedul-app.firebaseapp.com",projectId:"scedul-app",storageBucket:"scedul-app.firebasestorage.app",messagingSenderId:"238581400801",appId:"1:238581400801:web:48de9e162e8e51940a63a0"};
+firebase.initializeApp(fbCfg);const auth=firebase.auth(),db=firebase.firestore();
+db.enablePersistence({synchronizeTabs:true}).catch(()=>{});
+let unsub=null,cUser=null;
+function evRef(){return db.collection('users').doc(cUser.uid).collection('events')}
 function load(){try{S.evts=JSON.parse(localStorage.getItem('scedul_events'))||[]}catch{S.evts=[]}}
 function save(){localStorage.setItem('scedul_events',JSON.stringify(S.evts))}
+function updateAuthUI(){const a=document.getElementById('authArea');if(!a)return;
+if(cUser){const nm=cUser.displayName||'';const ph=cUser.photoURL;
+a.innerHTML=`${ph?`<img class="user-avatar" src="${ph}" referrerpolicy="no-referrer">`:''}${nm?`<span style="font-size:12px;color:var(--tx1);font-weight:600">${nm}</span>`:''}<span class="sync-dot"></span><button class="logout-btn" id="gOB">로그아웃</button>`;
+document.getElementById('gOB').addEventListener('click',()=>{auth.signOut()});
+}else{a.innerHTML='<button class="login-btn" id="gLB">G 로그인</button>';document.getElementById('gLB').addEventListener('click',googleLogin)}}
+function googleLogin(){auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e=>console.error(e))}
+function subscribeEvents(){if(unsub)unsub();const ref=evRef();
+unsub=ref.onSnapshot(snap=>{S.evts=snap.docs.map(d=>({id:d.id,...d.data()}));render();if(S.selDate)renderPanel(S.selDate)},err=>{console.error(err);load();render()})}
+function saveToCloud(evt){if(!cUser)return;const{id,...d}=evt;evRef().doc(id).set(d)}
+function deleteFromCloud(id){if(!cUser)return;evRef().doc(id).delete()}
+function deleteEvent(id){if(cUser){deleteFromCloud(id)}else{S.evts=S.evts.filter(x=>x.id!==id);save();render();if(S.selDate)renderPanel(S.selDate)}}
+auth.onAuthStateChanged(user=>{cUser=user;updateAuthUI();
+if(user){try{const lc=JSON.parse(localStorage.getItem('scedul_events'))||[];
+if(lc.length){const b=db.batch();lc.forEach(e=>{const{id,...d}=e;b.set(evRef().doc(id),d)});b.commit().then(()=>localStorage.removeItem('scedul_events'))}}catch{}
+subscribeEvents()}else{if(unsub){unsub();unsub=null}load();render()}});
 function fmt(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
 function isT(d){const t=new Date();return d.getFullYear()===t.getFullYear()&&d.getMonth()===t.getMonth()&&d.getDate()===t.getDate()}
 function gid(){return Date.now().toString(36)+Math.random().toString(36).substr(2,5)}
@@ -432,7 +467,7 @@ ${isMulti?`<span class="ev-card-time">📆 ${e.date} ~ ${e.endDate}</span>`:''}
 </div>
 ${e.note?`<div class="ev-card-note">${e.note}</div>`:''}`;
 card.querySelector('.edit').addEventListener('click',ev=>{ev.stopPropagation();openEdit(e.id)});
-card.querySelector('.del').addEventListener('click',ev=>{ev.stopPropagation();if(confirm(`"${e.title}" 일정을 삭제하시겠습니까?`)){S.evts=S.evts.filter(x=>x.id!==e.id);save();render();if(S.selDate)renderPanel(S.selDate)}});
+card.querySelector('.del').addEventListener('click',ev=>{ev.stopPropagation();if(confirm(`"${e.title}" 일정을 삭제하시겠습니까?`)){deleteEvent(e.id)}});
 body.appendChild(card);
 })}
 
@@ -578,10 +613,11 @@ function saveEv(){const t=document.getElementById('eTitle').value.trim();
 if(!t){document.getElementById('eTitle').style.borderColor='#e17055';document.getElementById('eTitle').focus();setTimeout(()=>document.getElementById('eTitle').style.borderColor='',1500);return}
 const sd=document.getElementById('eDate').value,ed=document.getElementById('eDate2').value;
 const data={title:t,date:sd,endDate:ed<sd?sd:ed,startTime:document.getElementById('eSt').value,endTime:document.getElementById('eEt').value,category:S.cat,note:document.getElementById('eNote').value.trim(),allDay:document.getElementById('allDay').checked};
-if(S.editId){const i=S.evts.findIndex(x=>x.id===S.editId);if(i!==-1)S.evts[i]={...S.evts[i],...data}}else{data.id=gid();S.evts.push(data)}
-save();closeM();render();if(S.selDate)renderPanel(S.selDate)}
+if(cUser){if(S.editId){saveToCloud({id:S.editId,...data})}else{const id=gid();saveToCloud({id,...data})}}
+else{if(S.editId){const i=S.evts.findIndex(x=>x.id===S.editId);if(i!==-1)S.evts[i]={...S.evts[i],...data}}else{data.id=gid();S.evts.push(data)}save();render();if(S.selDate)renderPanel(S.selDate)}
+closeM()}
 function delEv(){if(!S.editId)return;const e=S.evts.find(x=>x.id===S.editId);if(e&&!confirm(`"${e.title}" 일정을 삭제하시겠습니까?`))return;
-S.evts=S.evts.filter(x=>x.id!==S.editId);save();closeM();render();if(S.selDate)renderPanel(S.selDate)}
+deleteEvent(S.editId);closeM()}
 function render(){updH();if(S.view==='month')rMonth();else if(S.view==='week')rWeek();else rDay()}
 
 document.getElementById('prev').addEventListener('click',()=>nav(-1));
@@ -603,7 +639,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(document.getElem
 if(e.key==='Enter'&&document.getElementById('modal').classList.contains('on'))saveEv()});
 document.getElementById('eDate').addEventListener('change',e=>{const ed=document.getElementById('eDate2');if(ed.value<e.target.value)ed.value=e.target.value});
 window.addEventListener('resize',()=>{if(S.view==='month')rMonth()});
-load();initTheme();render();
+load();initTheme();render(); // initial render; auth will sync Firestore data
 </script>
 </body>
 </html>
