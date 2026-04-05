@@ -411,7 +411,7 @@ function isT(d){const t=new Date();return d.getFullYear()===t.getFullYear()&&d.g
 function gid(){return Date.now().toString(36)+Math.random().toString(36).substr(2,5)}
 function wkS(d){const r=new Date(d);r.setDate(r.getDate()-r.getDay());r.setHours(0,0,0,0);return r}
 function evFor(ds){return S.evts.filter(e=>{const ed=e.endDate||e.date;return e.date<=ds&&ed>=ds})}
-function evColor(e,idx){return CC[e.category]||COLORS[idx%COLORS.length]}
+function evColor(e,idx){return COLORS[idx%COLORS.length]}
 
 function initTheme(){const t=localStorage.getItem('scedul_theme')||'dark';document.documentElement.setAttribute('data-theme',t);document.getElementById('themeBtn').textContent=t==='dark'?'🌙':'☀️'}
 function toggleTheme(){const c=document.documentElement.getAttribute('data-theme');const n=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('scedul_theme',n);document.getElementById('themeBtn').textContent=n==='dark'?'🌙':'☀️'}
