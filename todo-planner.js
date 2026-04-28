@@ -2,7 +2,7 @@ var TODO_TAGS={NCS:{l:'NCS',bg:'rgba(59,130,246,.15)',c:'#3b82f6'},한국사:{l:
 var EXAMS={NCS:'2026-05-09',한국사:'2026-05-23',정처기:'2026-05-24',HSK:'2026-06-14'};
 var CLASSES={1:[[11,13],[15,17]],2:[[13,15]],3:[[11,13],[15,17]],4:[[13,15]]};
 var WORK={2:[[9,12.5],[15,17]],5:[[9,15]]};
-var DAILY={'04-28':[['NCS','1회 30문항 풀이 + 오답'],['정처기','1과목 소프트웨어설계 PDF'],['HSK','어휘 Day 1']],'04-29':[['NCS','2회 풀이 + 오답'],['한국사','1~2강'],['HSK','Day 2']],'04-30':[['NCS','3회 + 오답'],['정처기','1과목 마무리+기출20'],['HSK','Day 3']],'05-01':[['NCS','4회 + 오답'],['정처기','2과목 소프트웨어개발'],['한국사','3~4강'],['HSK','Day 4']],'05-02':[['NCS','5회+6회 + 오답'],['정처기','2과목 기출 40문항'],['HSK','듣기+Day 5']],'05-03':[['NCS','7회+8회 + 오답'],['한국사','5~6강'],['HSK','Day 6']],'05-04':[['NCS','9회 + 오답'],['정처기','3과목 DB구축 1차'],['HSK','Day 7']],'05-05':[['NCS','10회+오답 인덱스'],['한국사','7강'],['HSK','Day 8']],'05-06':[['NCS','약점 재풀이 30~50문항'],['정처기','DB 2차'],['HSK','Day 9']],'05-07':[['NCS','50문항/50분 실전'],['정처기','4과목 핵심'],['HSK','Day 10']],'05-08':[['NCS','최종 오답 2회독+정리'],['NCS','수험표·시험장 체크'],['정처기','4과목 기출 20']],'05-09':[['시험','🔥 NCS 시험!'],['한국사','연표 1시간'],['정처기','5과목 1시간']],'05-10':[['한국사','상 1~5강 압축'],['정처기','1과목 기출 60'],['HSK','Day 11']],'05-11':[['한국사','상 6~9강'],['정처기','2과목 이론+기출'],['HSK','Day 12']],'05-12':[['한국사','상 10~13강'],['정처기','3과목 SQL·정규화'],['HSK','Day 13']],'05-13':[['한국사','상 14~17강'],['정처기','4과목 OS·네트워크'],['HSK','Day 14']],'05-14':[['한국사','상 18~21강+총정리'],['정처기','5과목 보안'],['HSK','Day 15']],'05-15':[['한국사','하 22~25강'],['정처기','기출 1회 100문항'],['HSK','독해 1부분']],'05-16':[['한국사','26~30강'],['정처기','기출 2회 100문항'],['HSK','Day 16']],'05-17':[['한국사','31~34강'],['정처기','기출 3회 100문항'],['HSK','쓰기 어법']],'05-18':[['한국사','35~37강'],['정처기','약점 DB/SQL'],['HSK','Day 17']],'05-19':[['한국사','38~40강+연표'],['정처기','약점 OS·네트워크'],['HSK','Day 18']],'05-20':[['한국사','기출 1회 80분'],['정처기','CBT 모의 1회'],['HSK','독해 2부분']],'05-21':[['한국사','기출 2회+약점'],['정처기','CBT 모의 2회'],['HSK','Day 19']],'05-22':[['한국사','기출 3회+최종암기'],['정처기','오답노트 훑기'],['HSK','가볍게']],'05-23':[['시험','🔥 한국사 시험!'],['정처기','오후 100문항 점검']],'05-24':[['시험','🔥 정처기 필기!'],['HSK','오후 HSK 전환']]};
+var DAILY={'04-28':[['NCS','1회 30문항 풀이 + 오답'],['정처기','1과목 소프트웨어설계 PDF']],'04-29':[['NCS','2회 풀이 + 오답'],['한국사','1~2강'],['HSK','Day 2']],'04-30':[['NCS','3회 + 오답'],['정처기','1과목 마무리+기출20'],['HSK','Day 3']],'05-01':[['NCS','4회 + 오답'],['정처기','2과목 소프트웨어개발'],['한국사','3~4강'],['HSK','Day 4']],'05-02':[['NCS','5회+6회 + 오답'],['정처기','2과목 기출 40문항'],['HSK','듣기+Day 5']],'05-03':[['NCS','7회+8회 + 오답'],['한국사','5~6강'],['HSK','Day 6']],'05-04':[['NCS','9회 + 오답'],['정처기','3과목 DB구축 1차'],['HSK','Day 7']],'05-05':[['NCS','10회+오답 인덱스'],['한국사','7강'],['HSK','Day 8']],'05-06':[['NCS','약점 재풀이 30~50문항'],['정처기','DB 2차'],['HSK','Day 9']],'05-07':[['NCS','50문항/50분 실전'],['정처기','4과목 핵심'],['HSK','Day 10']],'05-08':[['NCS','최종 오답 2회독+정리'],['NCS','수험표·시험장 체크'],['정처기','4과목 기출 20']],'05-09':[['시험','🔥 NCS 시험!'],['한국사','연표 1시간'],['정처기','5과목 1시간']],'05-10':[['한국사','상 1~5강 압축'],['정처기','1과목 기출 60'],['HSK','Day 11']],'05-11':[['한국사','상 6~9강'],['정처기','2과목 이론+기출'],['HSK','Day 12']],'05-12':[['한국사','상 10~13강'],['정처기','3과목 SQL·정규화'],['HSK','Day 13']],'05-13':[['한국사','상 14~17강'],['정처기','4과목 OS·네트워크'],['HSK','Day 14']],'05-14':[['한국사','상 18~21강+총정리'],['정처기','5과목 보안'],['HSK','Day 15']],'05-15':[['한국사','하 22~25강'],['정처기','기출 1회 100문항'],['HSK','독해 1부분']],'05-16':[['한국사','26~30강'],['정처기','기출 2회 100문항'],['HSK','Day 16']],'05-17':[['한국사','31~34강'],['정처기','기출 3회 100문항'],['HSK','쓰기 어법']],'05-18':[['한국사','35~37강'],['정처기','약점 DB/SQL'],['HSK','Day 17']],'05-19':[['한국사','38~40강+연표'],['정처기','약점 OS·네트워크'],['HSK','Day 18']],'05-20':[['한국사','기출 1회 80분'],['정처기','CBT 모의 1회'],['HSK','독해 2부분']],'05-21':[['한국사','기출 2회+약점'],['정처기','CBT 모의 2회'],['HSK','Day 19']],'05-22':[['한국사','기출 3회+최종암기'],['정처기','오답노트 훑기'],['HSK','가볍게']],'05-23':[['시험','🔥 한국사 시험!'],['정처기','오후 100문항 점검']],'05-24':[['시험','🔥 정처기 필기!'],['HSK','오후 HSK 전환']]};
 var todoChecked=JSON.parse(localStorage.getItem('scedul_todo_checked')||'{}');
 var studyTimes=JSON.parse(localStorage.getItem('scedul_study_times')||'{}');
 function saveTodoChecked(){localStorage.setItem('scedul_todo_checked',JSON.stringify(todoChecked))}
@@ -32,9 +32,9 @@ blocks.forEach(function(b){var sa=(b.s/24)*Math.PI*2-Math.PI/2,ea=(b.e/24)*Math.
 c.beginPath();c.arc(cx,cy,R,sa,ea);c.strokeStyle=b.c;c.lineWidth=24;c.lineCap='butt';c.stroke();
 if(b.e-b.s>=1.5){var ma=(sa+ea)/2,lx=cx+Math.cos(ma)*R,ly=cy+Math.sin(ma)*R;
 c.save();c.translate(lx,ly);
-var rot=ma+Math.PI/2;if(ma>Math.PI*0.5&&ma<Math.PI*1.5)rot=ma-Math.PI/2;
-c.rotate(rot);c.font='bold 8px Inter,sans-serif';c.fillStyle='#fff';c.textAlign='center';c.textBaseline='middle';
-c.fillText(b.l.length>8?b.l.substring(0,8):b.l,0,0);c.restore();}});
+var rot=ma+Math.PI/2;if(rot>Math.PI)rot-=Math.PI;if(rot<0)rot+=Math.PI;
+c.rotate(rot);c.font='bold 9px Inter,sans-serif';c.fillStyle='#fff';c.textAlign='center';c.textBaseline='middle';
+c.fillText(b.l,0,0);c.restore();}});
 for(var h=0;h<24;h++){var a=(h/24)*Math.PI*2-Math.PI/2;
 c.beginPath();c.moveTo(cx+Math.cos(a)*(R+14),cy+Math.sin(a)*(R+14));c.lineTo(cx+Math.cos(a)*(R+20),cy+Math.sin(a)*(R+20));
 c.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--tx3').trim()||'#606078';c.lineWidth=h%6===0?2:1;c.stroke();
@@ -106,11 +106,7 @@ document.getElementById('plStatSub').textContent=pct===100?'완료! 🎉':total?
 document.getElementById('plStatPct').textContent=pct+'%';
 drawDonut('donutCanvas',pct,'#6c5ce7');updateTimerDisplay();
 var grouped={};items.forEach(function(it){if(!grouped[it.subj])grouped[it.subj]=[];grouped[it.subj].push(it);});
-var sp='';Object.keys(grouped).forEach(function(subj){var tag=TODO_TAGS[subj]||{bg:'rgba(108,92,231,.15)',c:'#6c5ce7'};
-var cnt=grouped[subj].length,dn=grouped[subj].filter(function(x){return todoChecked[x.id]}).length,p=cnt?Math.round(dn/cnt*100):0;
-var exam=EXAMS[subj],dd=exam?getDday(ds,exam):'';
-sp+='<div class="pl-subj-row"><span class="pl-subj-tag" style="background:'+tag.bg+';color:'+tag.c+'">'+subj+'</span><div class="pl-subj-bar-wrap"><div class="pl-subj-bar-fill" style="width:'+p+'%;background:'+tag.c+'"></div></div><span class="pl-subj-pct" style="color:'+tag.c+'">'+p+'%</span>'+(dd?'<span class="pl-subj-exam">'+dd+'</span>':'')+'</div>';});
-document.getElementById('plSubjProg').innerHTML=sp;
+renderPace(ds,items,grouped);
 if(!items.length){document.getElementById('plTodoList').innerHTML='<div class="pl-todo-empty">📭 할 일 없음</div>';drawClock(ds);return;}
 var th='';Object.keys(grouped).forEach(function(subj){var tag=TODO_TAGS[subj]||{bg:'rgba(108,92,231,.15)',c:'#6c5ce7'};
 th+='<div class="pl-subj-group"><div class="pl-subj-group-hdr"><span class="pl-subj-group-tag" style="background:'+tag.bg+';color:'+tag.c+'">'+subj+'</span><span class="pl-subj-group-count">'+grouped[subj].filter(function(x){return todoChecked[x.id]}).length+'/'+grouped[subj].length+'</span></div>';
@@ -123,10 +119,35 @@ var tid=row.dataset.tid;todoChecked[tid]=!todoChecked[tid];saveTodoChecked();
 row.classList.toggle('done');row.querySelector('.pl-todo-cb').textContent=todoChecked[tid]?'✓':'';
 refreshStats(ds);});});
 drawClock(ds);}
+function renderPace(ds,items,grouped){
+var total=items.length,done=items.filter(function(x){return todoChecked[x.id]}).length;
+var must=items.length?items[0].text:'—';
+var status,statusC;if(done===total&&total>0){status='완료 ✅';statusC='#22c55e';}else if(done>=total*0.5){status='양호 👍';statusC='#3b82f6';}else{status='주의 ⚠️';statusC='#eab308';}
+var allD=getAllDates(),di=allD.indexOf(ds),missed=0;
+for(var i=0;i<di;i++){var ditems=getTodoForDate(allD[i]);ditems.forEach(function(it){if(!todoChecked[it.id])missed++;});}
+var missedTxt=missed>0?missed+'개 미완료':'없음';
+var tomorrowDs=null;if(di>=0&&di<allD.length-1)tomorrowDs=allD[di+1];
+var adjTxt='없음';if(missed>3)adjTxt='밀린 '+missed+'개 분산 필요';else if(missed>0)adjTxt='내일 '+missed+'개 추가 소화';
+var PACE={NCS:{need:'하루 1회 필요',exam:'05-09'},한국사:{need:'하루 2강 필요',exam:'05-23'},정처기:{need:'격일 1과목 필요',exam:'05-24'},HSK:{need:'유지 루틴',exam:'06-14'}};
+var h='<table class="pl-pace-table">';
+h+='<tr><td class="pl-pace-label">완료</td><td class="pl-pace-val">'+done+' / '+total+'</td></tr>';
+h+='<tr><td class="pl-pace-label">필수</td><td class="pl-pace-val" style="font-weight:700">'+must+'</td></tr>';
+h+='<tr><td class="pl-pace-label">현재 상태</td><td class="pl-pace-val" style="color:'+statusC+';font-weight:800">'+status+'</td></tr>';
+h+='<tr><td class="pl-pace-label">밀림</td><td class="pl-pace-val" style="color:'+(missed>0?'#ef4444':'#22c55e')+'">'+missedTxt+'</td></tr>';
+h+='<tr><td class="pl-pace-label">내일 보정</td><td class="pl-pace-val">'+adjTxt+'</td></tr>';
+h+='</table>';
+h+='<div class="pl-pace-subtitle">시험별 필요 페이스</div>';
+h+='<div class="pl-pace-grid">';
+['NCS','한국사','정처기','HSK'].forEach(function(s){var tag=TODO_TAGS[s],p=PACE[s],dd=getDday(ds,EXAMS[s]);
+h+='<div class="pl-pace-item"><span class="pl-subj-tag" style="background:'+tag.bg+';color:'+tag.c+'">'+s+'</span><span class="pl-pace-need">'+p.need+'</span><span class="pl-pace-dd" style="color:#fd79a8;font-weight:800">'+dd+'</span></div>';});
+h+='</div>';
+document.getElementById('plPace').innerHTML=h;}
 function refreshStats(ds){var items=getTodoForDate(ds),total=items.length,done=items.filter(function(x){return todoChecked[x.id]}).length,pct=total?Math.round(done/total*100):0;
 document.getElementById('plStatDone').textContent=done+' / '+total;
 document.getElementById('plStatSub').textContent=pct===100?'완료! 🎉':total-done+'개 남음';
 document.getElementById('plStatPct').textContent=pct+'%';drawDonut('donutCanvas',pct,'#6c5ce7');renderMiniCal();
+var grouped={};items.forEach(function(it){if(!grouped[it.subj])grouped[it.subj]=[];grouped[it.subj].push(it);});
+renderPace(ds,items,grouped);
 var ov=calcOverall(),ovEl=document.getElementById('plOverall'),oh='';
 ['NCS','한국사','정처기','HSK'].forEach(function(s){var tag=TODO_TAGS[s],exam=EXAMS[s],dd=getDday(ds,exam),data=ov[s];
 oh+='<div class="pl-ov-item"><div class="pl-ov-icon" style="background:'+tag.c+'">'+s.charAt(0)+'</div><div class="pl-ov-info"><div class="pl-ov-name">'+s+' <span class="pl-ov-exam">'+dd+'</span></div><div class="pl-ov-bar"><div class="pl-ov-fill" style="width:'+data.pct+'%;background:'+tag.c+'"></div></div></div><div class="pl-ov-pct" style="color:'+tag.c+'">'+data.pct+'%</div></div>';});

@@ -656,18 +656,13 @@ load();initTheme();render(); // initial render; auth will sync Firestore data
 </div>
 </div>
 <div class="pl-body">
-<div class="pl-card pl-border-red">
+<div class="pl-card pl-border-red" style="border-left-color:#a855f7">
 <div class="pl-card-title">📈 전체 진행률</div>
 <div class="pl-overall" id="plOverall"></div>
 </div>
 <div class="pl-main">
 <div>
-<div class="pl-card pl-border-pink" style="margin-bottom:16px">
-<div class="pl-card-title">📅 학습 달력</div>
-<div id="plMiniCal"></div>
-<div class="pl-cal-study" id="plCalStudy"></div>
-</div>
-<div class="pl-card pl-border-green">
+<div class="pl-card pl-border-yellow" style="margin-bottom:16px">
 <div class="pl-card-title">⏰ 타임테이블</div>
 <div class="pl-clock-wrap"><canvas id="plannerClock"></canvas></div>
 <div class="pl-legend">
@@ -678,9 +673,14 @@ load();initTheme();render(); // initial render; auth will sync Firestore data
 <div class="pl-legend-item"><div class="pl-legend-dot" style="background:#06b6d4"></div>휴식</div>
 </div>
 </div>
+<div class="pl-card pl-border-green">
+<div class="pl-card-title">📅 학습 달력</div>
+<div id="plMiniCal"></div>
+<div class="pl-cal-study" id="plCalStudy"></div>
+</div>
 </div>
 <div>
-<div class="pl-card pl-border-blue" style="margin-bottom:16px">
+<div class="pl-card pl-border-red" style="margin-bottom:16px">
 <div class="pl-stats">
 <div class="pl-stat-card">
 <div class="pl-donut-wrap"><canvas id="donutCanvas"></canvas><div class="pl-donut-pct" id="plStatPct">0%</div></div>
@@ -700,9 +700,9 @@ load();initTheme();render(); // initial render; auth will sync Firestore data
 <div class="pl-card-title" style="margin-top:16px">✅ 할 일 목록</div>
 <div id="plTodoList"></div>
 </div>
-<div class="pl-card pl-border-yellow">
-<div class="pl-card-title">📊 오늘 과목별</div>
-<div id="plSubjProg"></div>
+<div class="pl-card pl-border-blue">
+<div class="pl-card-title">📌 오늘의 페이스</div>
+<div id="plPace"></div>
 </div>
 </div>
 </div>

@@ -112,6 +112,16 @@
 .pl-todo-subj{font-size:9px;font-weight:700;padding:1px 6px;border-radius:6px;display:inline-block;margin-bottom:2px}
 .pl-todo-text{font-size:13px;font-weight:500;color:var(--tx1);line-height:1.5;transition:var(--tr)}
 .pl-todo-empty{text-align:center;padding:30px 12px;color:var(--tx3);font-size:13px}
+/* Pace card */
+.pl-pace-table{width:100%;border-collapse:collapse;margin-bottom:14px}
+.pl-pace-table td{padding:8px 4px;border-bottom:1px solid var(--bd1);font-size:13px}
+.pl-pace-label{color:var(--tx3);font-weight:600;width:80px;white-space:nowrap}
+.pl-pace-val{color:var(--tx1)}
+.pl-pace-subtitle{font-size:12px;font-weight:800;color:var(--tx2);margin:12px 0 8px;letter-spacing:.5px}
+.pl-pace-grid{display:flex;flex-direction:column;gap:6px}
+.pl-pace-item{display:flex;align-items:center;gap:8px;padding:6px 8px;background:var(--bg3);border-radius:8px;border:1px solid var(--bd1)}
+.pl-pace-need{flex:1;font-size:12px;color:var(--tx2);font-weight:500}
+.pl-pace-dd{font-size:13px;min-width:40px;text-align:right}
 /* Responsive */
 @media(max-width:1000px){
 .pl-overall{grid-template-columns:1fr 1fr}
