@@ -210,7 +210,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg1);color:var(--tx1);min-h
 <button class="nb" id="next">›</button>
 </div>
 <button class="tbtn" id="todB">오늘</button>
-<button class="tbtn" id="todoBtn">📋 일일 계획</button>
+<button class="tbtn" id="todoBtn">일일 계획</button>
 </div>
 <div class="hdr-r">
 <div class="sync-area" id="syncArea"><span class="sync-dot loading" id="syncDot"></span><span id="syncText">연결 중…</span></div>
@@ -645,7 +645,7 @@ load();initTheme();render(); // initial render; auth will sync Firestore data
 <!-- Full-screen Planner View -->
 <div class="planner-view" id="plannerView">
 <div class="pl-header">
-<button class="pl-back" id="plBack">← <span>캘린더로 돌아가기</span></button>
+<button class="pl-back" id="plBack">← <span>돌아가기</span></button>
 <div class="pl-hdr-center">
 <div class="pl-date" id="plDate"></div>
 <div class="pl-phase" id="plPhase"></div>
@@ -656,48 +656,53 @@ load();initTheme();render(); // initial render; auth will sync Firestore data
 </div>
 </div>
 <div class="pl-body">
-<div class="pl-card">
+<div class="pl-card pl-border-red">
 <div class="pl-card-title">📈 전체 진행률</div>
 <div class="pl-overall" id="plOverall"></div>
 </div>
 <div class="pl-main">
 <div>
-<div class="pl-card" style="margin-bottom:16px">
+<div class="pl-card pl-border-pink" style="margin-bottom:16px">
 <div class="pl-card-title">📅 학습 달력</div>
 <div id="plMiniCal"></div>
+<div class="pl-cal-study" id="plCalStudy"></div>
 </div>
-<div class="pl-card">
+<div class="pl-card pl-border-green">
 <div class="pl-card-title">⏰ 타임테이블</div>
 <div class="pl-clock-wrap"><canvas id="plannerClock"></canvas></div>
 <div class="pl-legend">
 <div class="pl-legend-item"><div class="pl-legend-dot" style="background:#4338ca"></div>수면</div>
 <div class="pl-legend-item"><div class="pl-legend-dot" style="background:#64748b"></div>수업</div>
-<div class="pl-legend-item"><div class="pl-legend-dot" style="background:rgba(99,102,241,.3)"></div>근로</div>
+<div class="pl-legend-item"><div class="pl-legend-dot" style="background:rgba(99,102,241,.4)"></div>근로</div>
 <div class="pl-legend-item"><div class="pl-legend-dot" style="background:#f97316"></div>식사</div>
 <div class="pl-legend-item"><div class="pl-legend-dot" style="background:#06b6d4"></div>휴식</div>
 </div>
 </div>
 </div>
 <div>
+<div class="pl-card pl-border-blue" style="margin-bottom:16px">
 <div class="pl-stats">
 <div class="pl-stat-card">
 <div class="pl-donut-wrap"><canvas id="donutCanvas"></canvas><div class="pl-donut-pct" id="plStatPct">0%</div></div>
 <div class="pl-stat-info"><div class="pl-stat-label">완료율</div><div class="pl-stat-val" id="plStatDone">0 / 0</div><div class="pl-stat-sub" id="plStatSub">할 일 없음</div></div>
 </div>
 <div class="pl-stat-card">
-<div class="pl-donut-wrap" style="display:flex;align-items:center;justify-content:center"><span style="font-size:28px">📚</span></div>
-<div class="pl-stat-info"><div class="pl-stat-label">학습 시간</div><div class="pl-stat-val" id="plStatStudy">0h</div><div class="pl-stat-sub" id="plStatStudySub">예상 학습량</div></div>
+<div class="pl-timer-display" id="plTimerDisplay">00:00:00</div>
+<div class="pl-stat-info"><div class="pl-stat-label">학습 시간</div><div class="pl-stat-val" id="plStatStudy">0분</div><div class="pl-stat-sub" id="plStatStudySub">오늘 누적</div></div>
 </div>
 </div>
-<div class="pl-card">
+<div class="pl-timer-controls">
+<button class="pl-timer-btn pl-timer-start" id="plTimerStart">▶ 시작</button>
+<button class="pl-timer-btn pl-timer-pause" id="plTimerPause" style="display:none">⏸ 일시정지</button>
+<button class="pl-timer-btn pl-timer-resume" id="plTimerResume" style="display:none">▶ 재개</button>
+<button class="pl-timer-btn pl-timer-stop" id="plTimerStop" style="display:none">⏹ 완료</button>
+</div>
+<div class="pl-card-title" style="margin-top:16px">✅ 할 일 목록</div>
+<div id="plTodoList"></div>
+</div>
+<div class="pl-card pl-border-yellow">
 <div class="pl-card-title">📊 오늘 과목별</div>
 <div id="plSubjProg"></div>
-</div>
-</div>
-<div>
-<div class="pl-card pl-todo-card">
-<div class="pl-card-title">✅ 할 일 목록</div>
-<div id="plTodoList"></div>
 </div>
 </div>
 </div>
