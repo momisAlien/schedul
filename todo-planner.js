@@ -63,11 +63,10 @@ function getAllDates(){var r=[];for(var k in DAILY)r.push('2026-'+k);return r.so
 function calcOverall(){var all=getAllDates(),r={};['NCS','한국사','정처기','HSK'].forEach(function(s){var t=0,d=0;all.forEach(function(ds){getTodoForDate(ds).forEach(function(it){if(it.subj===s){t++;if(todoChecked[it.id])d++;}});});r[s]={total:t,done:d,pct:t?Math.round(d/t*100):0};});return r;}
 function calcDayPct(ds){var it=getTodoForDate(ds);if(!it.length)return-1;return Math.round(it.filter(function(x){return todoChecked[x.id]}).length/it.length*100);}
 function getClockBlocks(ds){var d=new Date(ds+'T00:00:00'),dow=d.getDay(),b=[];
-b.push({l:'수면',s:0,e:7,c:'#4338ca'});b.push({l:'기상',s:7,e:8,c:'#7c3aed'});
+b.push({l:'수면',s:2,e:9,c:'#4338ca'});
 if(CLASSES[dow])CLASSES[dow].forEach(function(x){b.push({l:'수업',s:x[0],e:x[1],c:'#64748b'});});
 if(WORK[dow])WORK[dow].forEach(function(x){b.push({l:'근로',s:x[0],e:x[1],c:'rgba(99,102,241,.35)'});});
-b.push({l:'점심',s:12,e:13,c:'#f97316'});b.push({l:'저녁',s:18,e:19,c:'#f97316'});
-b.push({l:'휴식',s:21.5,e:23,c:'#06b6d4'});b.push({l:'취침',s:23,e:24,c:'#4338ca'});return b;}
+b.push({l:'휴식',s:21.5,e:23,c:'#06b6d4'});return b;}
 function drawClock(ds){var cv=document.getElementById('plannerClock');if(!cv)return;
 var dpr=window.devicePixelRatio||1,sz=Math.min(320,window.innerWidth<600?window.innerWidth-60:320);
 cv.width=sz*dpr;cv.height=sz*dpr;cv.style.width=sz+'px';cv.style.height=sz+'px';
