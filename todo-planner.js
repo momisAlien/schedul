@@ -4,16 +4,16 @@ var CLASSES={1:[[11,13],[15,17]],2:[[13,15]],3:[[11,13],[15,17]],4:[[13,15]]};
 var WORK={2:[[9,12.5],[15,17]],5:[[9,15]]};
 var DAILY={
 '04-28':[['NCS','1회 30문항 풀이 + 오답'],['한국사','별별한국사 1~2강']],
-'04-29':[['NCS','2회 풀이 + 오답'],['한국사','3~4강'],['HSK','Day 1']],
-'04-30':[['NCS','3회 + 오답'],['한국사','5~6강'],['HSK','Day 2'],['정처기','1과목 소프트웨어설계 PDF']],
-'05-01':[['NCS','4회 + 오답'],['한국사','7~8강'],['HSK','Day 3'],['정처기','1과목 소프트웨어설계 복습']],
-'05-02':[['NCS','5회+6회 + 오답'],['한국사','9~10강'],['HSK','듣기+Day 4'],['정처기','1과목 마무리+기출20']],
-'05-03':[['NCS','7회+8회 + 오답'],['한국사','11~12강'],['HSK','Day 5'],['정처기','2과목 소프트웨어개발']],
-'05-04':[['NCS','9회 + 오답'],['한국사','13~14강'],['HSK','Day 6'],['정처기','2과목 기출 40문항']],
-'05-05':[['NCS','10회+오답 인덱스'],['한국사','15~16강'],['HSK','Day 7'],['정처기','2과목 오답 복습']],
-'05-06':[['NCS','약점 재풀이 30~50문항'],['한국사','17~18강'],['HSK','Day 8'],['정처기','3과목 DB구축 1차']],
-'05-07':[['NCS','50문항/50분 실전'],['한국사','19~20강'],['HSK','Day 9'],['정처기','3과목 DB 복습']],
-'05-08':[['NCS','최종 오답 2회독+정리'],['NCS','수험표·시험장 체크'],['한국사','21~22강'],['정처기','4과목 핵심']],
+'04-29':[['NCS','2회 풀이 + 오답'],['한국사','3~4강'],['HSK','Day 1'],['정처기','1과목 소프트웨어설계 PDF']],
+'04-30':[['NCS','3회 + 오답'],['한국사','5~6강'],['HSK','Day 2'],['정처기','1과목 소프트웨어설계 복습']],
+'05-01':[['NCS','4회 + 오답'],['한국사','7~8강'],['HSK','Day 3'],['정처기','1과목 마무리+기출20']],
+'05-02':[['NCS','5회+6회 + 오답'],['한국사','9~10강'],['HSK','듣기+Day 4'],['정처기','2과목 소프트웨어개발']],
+'05-03':[['NCS','7회+8회 + 오답'],['한국사','11~12강'],['HSK','Day 5'],['정처기','2과목 기출 40문항']],
+'05-04':[['NCS','9회 + 오답'],['한국사','13~14강'],['HSK','Day 6'],['정처기','2과목 오답 복습']],
+'05-05':[['NCS','10회+오답 인덱스'],['한국사','15~16강'],['HSK','Day 7'],['정처기','3과목 DB구축 1차']],
+'05-06':[['NCS','약점 재풀이 30~50문항'],['한국사','17~18강'],['HSK','Day 8'],['정처기','3과목 DB 복습']],
+'05-07':[['NCS','50문항/50분 실전'],['한국사','19~20강'],['HSK','Day 9'],['정처기','4과목 핵심']],
+'05-08':[['NCS','최종 오답 2회독+정리'],['NCS','수험표·시험장 체크'],['한국사','21~22강'],['정처기','4과목 기출 20']],
 '05-09':[['시험','🔥 NCS 시험!'],['한국사','연표 1시간'],['정처기','5과목 1시간']],
 '05-10':[['한국사','상 1~5강 압축'],['정처기','1과목 기출 60'],['HSK','Day 10']],
 '05-11':[['한국사','상 6~9강'],['정처기','2과목 이론+기출'],['HSK','Day 11']],
@@ -69,24 +69,25 @@ if(WORK[dow])WORK[dow].forEach(function(x){b.push({l:'근로',s:x[0],e:x[1],c:'r
 b.push({l:'점심',s:12,e:13,c:'#f97316'});b.push({l:'저녁',s:18,e:19,c:'#f97316'});
 b.push({l:'휴식',s:21.5,e:23,c:'#06b6d4'});b.push({l:'취침',s:23,e:24,c:'#4338ca'});return b;}
 function drawClock(ds){var cv=document.getElementById('plannerClock');if(!cv)return;
-var dpr=window.devicePixelRatio||1,sz=Math.min(280,window.innerWidth<600?window.innerWidth-80:280);
+var dpr=window.devicePixelRatio||1,sz=Math.min(320,window.innerWidth<600?window.innerWidth-60:320);
 cv.width=sz*dpr;cv.height=sz*dpr;cv.style.width=sz+'px';cv.style.height=sz+'px';
-var c=cv.getContext('2d');c.scale(dpr,dpr);var cx=sz/2,cy=sz/2,R=sz/2-26;
+var c=cv.getContext('2d');c.scale(dpr,dpr);var cx=sz/2,cy=sz/2,R=sz/2-42;
 var bd=getComputedStyle(document.documentElement).getPropertyValue('--bd1').trim()||'#2a2a3e';
 c.beginPath();c.arc(cx,cy,R,0,Math.PI*2);c.strokeStyle=bd;c.lineWidth=26;c.stroke();
 var blocks=getClockBlocks(ds);
 blocks.forEach(function(b){var sa=(b.s/24)*Math.PI*2-Math.PI/2,ea=(b.e/24)*Math.PI*2-Math.PI/2;
 c.beginPath();c.arc(cx,cy,R,sa,ea);c.strokeStyle=b.c;c.lineWidth=24;c.lineCap='butt';c.stroke();
 if(b.e-b.s>=1.5){var ma=(sa+ea)/2,lx=cx+Math.cos(ma)*R,ly=cy+Math.sin(ma)*R;
-c.save();c.translate(lx,ly);
-var rot=ma+Math.PI/2;if(rot>Math.PI)rot-=Math.PI;if(rot<0)rot+=Math.PI;
-c.rotate(rot);c.font='bold 9px Inter,sans-serif';c.fillStyle='#fff';c.textAlign='center';c.textBaseline='middle';
-c.fillText(b.l,0,0);c.restore();}});
+c.save();c.font='bold 10px Inter,sans-serif';c.fillStyle='#fff';c.textAlign='center';c.textBaseline='middle';
+c.fillText(b.l,lx,ly);c.restore();}});
+var tx2=getComputedStyle(document.documentElement).getPropertyValue('--tx2').trim()||'#9090a8';
+var tx3=getComputedStyle(document.documentElement).getPropertyValue('--tx3').trim()||'#606078';
 for(var h=0;h<24;h++){var a=(h/24)*Math.PI*2-Math.PI/2;
-c.beginPath();c.moveTo(cx+Math.cos(a)*(R+14),cy+Math.sin(a)*(R+14));c.lineTo(cx+Math.cos(a)*(R+20),cy+Math.sin(a)*(R+20));
-c.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--tx3').trim()||'#606078';c.lineWidth=h%6===0?2:1;c.stroke();
-if(h%3===0){c.font='bold 9px Inter,sans-serif';c.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--tx2').trim()||'#9090a8';c.textAlign='center';c.textBaseline='middle';
-c.fillText(h+'',cx+Math.cos(a)*(R+28),cy+Math.sin(a)*(R+28));}}
+var tickIn=R+14,tickOut=R+19;
+c.beginPath();c.moveTo(cx+Math.cos(a)*tickIn,cy+Math.sin(a)*tickIn);c.lineTo(cx+Math.cos(a)*tickOut,cy+Math.sin(a)*tickOut);
+c.strokeStyle=tx3;c.lineWidth=h%6===0?2:1;c.stroke();
+if(h%3===0){c.save();c.font='bold 11px Inter,sans-serif';c.fillStyle=tx2;c.textAlign='center';c.textBaseline='middle';
+c.fillText(h+'',cx+Math.cos(a)*(R+32),cy+Math.sin(a)*(R+32));c.restore();}}
 var gr=c.createRadialGradient(cx,cy,0,cx,cy,12);gr.addColorStop(0,'#6c5ce7');gr.addColorStop(1,'#a29bfe');
 c.beginPath();c.arc(cx,cy,8,0,Math.PI*2);c.fillStyle=gr;c.fill();
 var now=new Date(),nh=now.getHours()+now.getMinutes()/60,na=(nh/24)*Math.PI*2-Math.PI/2;
