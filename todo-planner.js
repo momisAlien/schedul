@@ -32,8 +32,28 @@ var DAILY={
 '05-24':[['시험','🔥 정처기 필기!'],['HSK','오후 HSK 전환']]};
 var todoChecked=JSON.parse(localStorage.getItem('scedul_todo_checked')||'{}');
 var studyTimes=JSON.parse(localStorage.getItem('scedul_study_times')||'{}');
-function saveTodoChecked(){localStorage.setItem('scedul_todo_checked',JSON.stringify(todoChecked))}
-function saveStudyTimes(){localStorage.setItem('scedul_study_times',JSON.stringify(studyTimes))}
+function saveTodoChecked(){
+localStorage.setItem('scedul_todo_checked',JSON.stringify(todoChecked));
+if(typeof firebase!=='undefined'&&firebase.firestore){
+firebase.firestore().collection('calendar').doc('admin').collection('planner').doc('todoChecked').set({data:todoChecked}).catch(function(e){console.error('todo sync err',e)});}}
+function saveStudyTimes(){
+localStorage.setItem('scedul_study_times',JSON.stringify(studyTimes));
+if(typeof firebase!=='undefined'&&firebase.firestore){
+firebase.firestore().collection('calendar').doc('admin').collection('planner').doc('studyTimes').set({data:studyTimes}).catch(function(e){console.error('timer sync err',e)});}}
+var _plannerSynced=false;
+function initPlannerSync(){
+if(typeof firebase==='undefined'||!firebase.firestore)return;
+var pRef=firebase.firestore().collection('calendar').doc('admin').collection('planner');
+pRef.doc('todoChecked').onSnapshot(function(snap){
+if(snap.exists){var d=snap.data().data;if(d){todoChecked=d;localStorage.setItem('scedul_todo_checked',JSON.stringify(d));
+if(_plannerSynced&&plannerDateStr&&document.getElementById('plannerView').classList.contains('on'))openTodo();}_plannerSynced=true;}});
+pRef.doc('studyTimes').onSnapshot(function(snap){
+if(snap.exists){var d=snap.data().data;if(d){studyTimes=d;localStorage.setItem('scedul_study_times',JSON.stringify(d));
+if(plannerDateStr&&document.getElementById('plannerView').classList.contains('on')){updateTimerDisplay();showCalStudy();renderMiniCal();}}}});
+var lc=JSON.parse(localStorage.getItem('scedul_todo_checked')||'{}');
+if(Object.keys(lc).length)pRef.doc('todoChecked').set({data:lc},{merge:true}).catch(function(){});
+var lt=JSON.parse(localStorage.getItem('scedul_study_times')||'{}');
+if(Object.keys(lt).length)pRef.doc('studyTimes').set({data:lt},{merge:true}).catch(function(){});}
 var plannerDateStr=null,mcalMonth=null,mcalYear=null;
 var timerInterval=null,timerStart=null,timerElapsed=0,timerRunning=false;
 function getTodoForDate(ds){var k=ds.substring(5);var d=DAILY[k];if(!d)return[];return d.map(function(x,i){return{id:x[0]+'-'+ds+'-'+i,subj:x[0],text:x[1]}});}
@@ -184,6 +204,7 @@ function plannerNav(dir){if(timerRunning)stopTimer();var d=new Date(plannerDateS
 plannerDateStr=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 if(typeof S!=='undefined')S.selDate=plannerDateStr;mcalMonth=d.getMonth();mcalYear=d.getFullYear();openTodo();}
 (function(){
+initPlannerSync();
 document.getElementById('todoBtn').addEventListener('click',openTodo);
 document.getElementById('plBack').addEventListener('click',closeTodo);
 document.getElementById('plPrev').addEventListener('click',function(){plannerNav(-1)});
