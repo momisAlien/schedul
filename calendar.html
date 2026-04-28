@@ -656,39 +656,49 @@ load();initTheme();render(); // initial render; auth will sync Firestore data
 </div>
 </div>
 <div class="pl-body">
+<div class="pl-card">
+<div class="pl-card-title">📈 전체 진행률</div>
+<div class="pl-overall" id="plOverall"></div>
+</div>
+<div class="pl-main">
 <div>
-<div class="pl-clock-card">
-<div class="pl-card-title">⏰ 오늘의 타임테이블</div>
+<div class="pl-card" style="margin-bottom:16px">
+<div class="pl-card-title">📅 학습 달력</div>
+<div id="plMiniCal"></div>
+</div>
+<div class="pl-card">
+<div class="pl-card-title">⏰ 타임테이블</div>
 <div class="pl-clock-wrap"><canvas id="plannerClock"></canvas></div>
-<div class="pl-legend" id="plLegend">
-<div class="pl-legend-item"><div class="pl-legend-dot" style="background:#6366f1"></div>수면</div>
-<div class="pl-legend-item"><div class="pl-legend-dot" style="background:#3b82f6"></div>NCS</div>
-<div class="pl-legend-item"><div class="pl-legend-dot" style="background:#ef4444"></div>한국사</div>
-<div class="pl-legend-item"><div class="pl-legend-dot" style="background:#22c55e"></div>정처기</div>
-<div class="pl-legend-item"><div class="pl-legend-dot" style="background:#eab308"></div>HSK</div>
+<div class="pl-legend">
+<div class="pl-legend-item"><div class="pl-legend-dot" style="background:#4338ca"></div>수면</div>
+<div class="pl-legend-item"><div class="pl-legend-dot" style="background:#64748b"></div>수업</div>
+<div class="pl-legend-item"><div class="pl-legend-dot" style="background:rgba(99,102,241,.3)"></div>근로</div>
 <div class="pl-legend-item"><div class="pl-legend-dot" style="background:#f97316"></div>식사</div>
 <div class="pl-legend-item"><div class="pl-legend-dot" style="background:#06b6d4"></div>휴식</div>
 </div>
 </div>
-<div class="pl-subj-card" style="margin-top:24px">
-<div class="pl-card-title">📊 과목별 진행률</div>
-<div id="plSubjProg"></div>
 </div>
-</div>
-<div class="pl-right">
+<div>
 <div class="pl-stats">
 <div class="pl-stat-card">
 <div class="pl-donut-wrap"><canvas id="donutCanvas"></canvas><div class="pl-donut-pct" id="plStatPct">0%</div></div>
 <div class="pl-stat-info"><div class="pl-stat-label">완료율</div><div class="pl-stat-val" id="plStatDone">0 / 0</div><div class="pl-stat-sub" id="plStatSub">할 일 없음</div></div>
 </div>
 <div class="pl-stat-card">
-<div class="pl-donut-wrap" style="display:flex;align-items:center;justify-content:center"><span style="font-size:32px">📚</span></div>
-<div class="pl-stat-info"><div class="pl-stat-label">학습 시간</div><div class="pl-stat-val" id="plStatStudy">0h</div><div class="pl-stat-sub" id="plStatStudySub">오늘의 학습량</div></div>
+<div class="pl-donut-wrap" style="display:flex;align-items:center;justify-content:center"><span style="font-size:28px">📚</span></div>
+<div class="pl-stat-info"><div class="pl-stat-label">학습 시간</div><div class="pl-stat-val" id="plStatStudy">0h</div><div class="pl-stat-sub" id="plStatStudySub">예상 학습량</div></div>
 </div>
 </div>
-<div class="pl-todo-card">
+<div class="pl-card">
+<div class="pl-card-title">📊 오늘 과목별</div>
+<div id="plSubjProg"></div>
+</div>
+</div>
+<div>
+<div class="pl-card pl-todo-card">
 <div class="pl-card-title">✅ 할 일 목록</div>
 <div id="plTodoList"></div>
+</div>
 </div>
 </div>
 </div>
