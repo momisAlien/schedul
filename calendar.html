@@ -192,42 +192,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg1);color:var(--tx1);min-h
 .dp-body{padding:8px 10px}
 .dp-add{margin:6px 10px 10px}
 }
-/* === Todo Sidebar === */
-.todo-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);z-index:1100;animation:fi .2s}
-.todo-overlay.on{display:block}
-.todo-sb{position:fixed;top:0;right:-440px;width:420px;max-width:92vw;height:100vh;background:var(--bg2);border-left:1px solid var(--bd1);box-shadow:-4px 0 30px rgba(0,0,0,.4);z-index:1101;display:flex;flex-direction:column;transition:right .35s cubic-bezier(.4,0,.2,1)}
-.todo-sb.on{right:0}
-.todo-sb-hdr{padding:20px 24px 16px;border-bottom:1px solid var(--bd1);background:var(--bg3);flex-shrink:0}
-.todo-sb-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.todo-sb-title{font-size:20px;font-weight:800;background:linear-gradient(135deg,var(--ac1),#a29bfe,#fd79a8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.todo-sb-close{width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:none;background:var(--bg4);color:var(--tx2);border-radius:var(--r1);font-size:18px;transition:var(--tr);cursor:pointer}
-.todo-sb-close:hover{background:var(--bg5);color:var(--tx1)}
-.todo-sb-date{font-size:15px;font-weight:600;color:var(--tx1);margin-bottom:4px}
-.todo-sb-phase{font-size:12px;color:var(--tx2);font-weight:500}
-.todo-prog-wrap{margin-top:14px}
-.todo-prog-info{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:12px;font-weight:600;color:var(--tx2)}
-.todo-prog-pct{font-size:16px;font-weight:800;color:var(--ac1)}
-.todo-prog-bar{width:100%;height:8px;background:var(--bg4);border-radius:4px;overflow:hidden}
-.todo-prog-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--ac1),#a29bfe,#fd79a8);transition:width .4s cubic-bezier(.4,0,.2,1);box-shadow:0 0 10px var(--ac1g)}
-.todo-sb-body{flex:1;overflow-y:auto;padding:16px 20px}
-.todo-subject{margin-bottom:18px}
-.todo-subject-hdr{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.todo-subject-tag{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.5px}
-.todo-subject-name{font-size:14px;font-weight:700;color:var(--tx1)}
-.todo-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--bg3);border:1px solid var(--bd1);border-radius:10px;margin-bottom:6px;transition:var(--tr);cursor:pointer}
-.todo-item:hover{background:var(--bg4);transform:translateX(2px)}
-.todo-item.done{opacity:.55}
-.todo-item.done .todo-text{text-decoration:line-through;color:var(--tx3)}
-.todo-cb{width:20px;height:20px;min-width:20px;border:2px solid var(--bd2);border-radius:6px;display:flex;align-items:center;justify-content:center;transition:var(--tr);margin-top:1px;font-size:12px;color:transparent}
-.todo-item.done .todo-cb{background:var(--ac1);border-color:var(--ac1);color:#fff}
-.todo-text{font-size:13px;font-weight:500;color:var(--tx1);line-height:1.5;transition:var(--tr)}
-.todo-empty{text-align:center;padding:40px 20px;color:var(--tx3);font-size:14px}
-@media(max-width:768px){
-.todo-sb{width:100vw;max-width:100vw;right:-100vw}
-.todo-sb-hdr{padding:14px 16px 12px}
-.todo-sb-body{padding:12px 14px}
-}
 </style>
+<link rel="stylesheet" href="todo-planner.css">
 <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore-compat.js"></script>
 </head>
@@ -275,20 +241,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg1);color:var(--tx1);min-h
 </div>
 </div>
 </div>
-<!-- Todo Sidebar -->
-<div class="todo-overlay" id="todoOverlay"></div>
-<div class="todo-sb" id="todoSb">
-<div class="todo-sb-hdr">
-<div class="todo-sb-top"><div class="todo-sb-title">📋 일일 계획 (To-Do)</div><button class="todo-sb-close" id="todoClose">✕</button></div>
-<div class="todo-sb-date" id="todoDate"></div>
-<div class="todo-sb-phase" id="todoPhase"></div>
-<div class="todo-prog-wrap">
-<div class="todo-prog-info"><span id="todoPrgTxt">0 / 0 완료</span><span class="todo-prog-pct" id="todoPrgPct">0%</span></div>
-<div class="todo-prog-bar"><div class="todo-prog-fill" id="todoPrgFill" style="width:0%"></div></div>
-</div>
-</div>
-<div class="todo-sb-body" id="todoBody"></div>
-</div>
+
 <div class="mo" id="modal">
 <div class="md">
 <div class="mdh"><div class="mdt" id="mtitle">일정 추가</div><button class="mdc" id="mclose">✕</button></div>
@@ -685,90 +638,61 @@ if(e.key==='Enter'&&document.getElementById('modal').classList.contains('on'))sa
 document.getElementById('eDate').addEventListener('change',e=>{const ed=document.getElementById('eDate2');if(ed.value<e.target.value)ed.value=e.target.value});
 window.addEventListener('resize',()=>{if(S.view==='month')rMonth()});
 
-/* ===== TODO SIDEBAR MODULE ===== */
-const TODO_TAGS={NCS:{label:'NCS',bg:'rgba(59,130,246,.15)',color:'#3b82f6',border:'#3b82f6'},한국사:{label:'한국사',bg:'rgba(239,68,68,.15)',color:'#ef4444',border:'#ef4444'},정처기:{label:'정처기',bg:'rgba(34,197,94,.15)',color:'#22c55e',border:'#22c55e'},HSK:{label:'HSK',bg:'rgba(234,179,8,.15)',color:'#eab308',border:'#eab308'},시험:{label:'시험',bg:'rgba(168,85,247,.15)',color:'#a855f7',border:'#a855f7'}};
-function getTodoForDate(ds){
-const d=new Date(ds+'T00:00:00'),items=[],ph=getPhase(ds);
-if(ds>='2026-04-28'&&ds<='2026-05-08'){
-items.push({id:'ncs-'+ds,subj:'NCS',text:'혼잡 PSAT 300제 — 하루 30문제 풀이 및 오답 분석'});
-items.push({id:'kor-'+ds,subj:'한국사',text:'최태성 별별한국사 — 하루 1강 수강'});
-items.push({id:'jcg-'+ds,subj:'정처기',text:'핵심요약 PDF — 하루 5~10페이지 정독'});
-items.push({id:'hsk-'+ds,subj:'HSK',text:'해커스 핵심어휘집 — 1Day 눈도장 10분'});
-}
-if(ds==='2026-05-08')items.push({id:'ncs-review-'+ds,subj:'NCS',text:'누적 오답 총복습 및 실전 시뮬레이션'});
-if(ds==='2026-05-09')items.push({id:'ncs-exam-'+ds,subj:'시험',text:'🔥 KIC 청년인턴 NCS 시험 응시!'});
-if(ds>='2026-05-10'&&ds<='2026-05-16'){
-items.push({id:'kor2-'+ds,subj:'한국사',text:'하루 2~3강 몰아보기'});
-items.push({id:'jcg2-'+ds,subj:'정처기',text:'3~5과목 PDF 정독'});
-items.push({id:'hsk2-'+ds,subj:'HSK',text:'해커스 핵심어휘집 1Day 눈도장 유지'});
-}
-if(ds>='2026-05-17'&&ds<='2026-05-22'){
-items.push({id:'kor3-'+ds,subj:'한국사',text:'심화 기출 1회차 풀이 + 개념 보완'});
-items.push({id:'jcg3-'+ds,subj:'정처기',text:'CBT 기출 2회차 풀이 + PDF 오답 발췌독'});
-}
-if(ds==='2026-05-23'){
-items.push({id:'kor-exam-'+ds,subj:'시험',text:'🔥 한국사 시험 응시!'});
-items.push({id:'jcg-cram-'+ds,subj:'정처기',text:'정처기 직전 벼락치기'});
-}
-if(ds==='2026-05-24')items.push({id:'jcg-exam-'+ds,subj:'시험',text:'🔥 정보처리기사 필기 시험 응시!'});
-if(ds>='2026-05-25'&&ds<='2026-06-15'){
-items.push({id:'hsk3-'+ds,subj:'HSK',text:'핵심어휘집 3Day씩 누적 복습 (iBT 타이핑 연습)'});
-items.push({id:'hsk4-'+ds,subj:'HSK',text:'쓰기 1부분 문법 공식 하루 2개 암기'});
-items.push({id:'hsk5-'+ds,subj:'HSK',text:'실전모의고사 듣기 1회 풀이'});
-}
-return items;
-}
-function getPhase(ds){
-if(ds>='2026-04-28'&&ds<='2026-05-08')return 'Phase 1 · NCS 집중 기간';
-if(ds==='2026-05-09')return 'Phase 1 결전 · NCS 시험일';
-if(ds>='2026-05-10'&&ds<='2026-05-16')return 'Phase 2 전반 · 한국사+정처기 몰입';
-if(ds>='2026-05-17'&&ds<='2026-05-22')return 'Phase 2 후반 · 기출 풀이 강화';
-if(ds==='2026-05-23')return 'Phase 2 이벤트 · 한국사 시험일';
-if(ds==='2026-05-24')return 'Phase 2 결전 · 정처기 시험일';
-if(ds>='2026-05-25'&&ds<='2026-06-15')return 'Phase 3 · HSK 집중 기간';
-return '';
-}
-let todoChecked=JSON.parse(localStorage.getItem('scedul_todo_checked')||'{}');
-function saveTodoChecked(){localStorage.setItem('scedul_todo_checked',JSON.stringify(todoChecked))}
-function openTodo(){
-const ds=S.selDate||fmt(S.cur);
-const d=new Date(ds+'T00:00:00');
-document.getElementById('todoDate').textContent=`${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 (${DN[d.getDay()]})`;
-const phase=getPhase(ds);
-document.getElementById('todoPhase').textContent=phase||'일정 없는 기간';
-const items=getTodoForDate(ds);
-const body=document.getElementById('todoBody');
-if(!items.length){body.innerHTML='<div class="todo-empty">📭 이 날짜에 할 일이 없습니다</div>';updTodoProg(0,0);document.getElementById('todoOverlay').classList.add('on');document.getElementById('todoSb').classList.add('on');return}
-body.innerHTML='';
-const grouped={};items.forEach(it=>{if(!grouped[it.subj])grouped[it.subj]=[];grouped[it.subj].push(it)});
-Object.keys(grouped).forEach(subj=>{
-const sec=document.createElement('div');sec.className='todo-subject';
-const tag=TODO_TAGS[subj]||{label:subj,bg:'rgba(108,92,231,.15)',color:'var(--ac1)',border:'var(--ac1)'};
-sec.innerHTML=`<div class="todo-subject-hdr"><span class="todo-subject-tag" style="background:${tag.bg};color:${tag.color}">${tag.label}</span></div>`;
-grouped[subj].forEach(it=>{
-const row=document.createElement('div');row.className='todo-item'+(todoChecked[it.id]?' done':'');
-row.innerHTML=`<div class="todo-cb">${todoChecked[it.id]?'✓':''}</div><div class="todo-text">${it.text}</div>`;
-row.style.borderLeft=`3px solid ${tag.border}`;
-row.addEventListener('click',()=>{todoChecked[it.id]=!todoChecked[it.id];saveTodoChecked();row.classList.toggle('done');row.querySelector('.todo-cb').textContent=todoChecked[it.id]?'✓':'';
-const total=items.length,done=items.filter(x=>todoChecked[x.id]).length;updTodoProg(done,total)});
-sec.appendChild(row)});
-body.appendChild(sec)});
-const total=items.length,done=items.filter(x=>todoChecked[x.id]).length;updTodoProg(done,total);
-document.getElementById('todoOverlay').classList.add('on');document.getElementById('todoSb').classList.add('on');
-}
-function updTodoProg(done,total){
-document.getElementById('todoPrgTxt').textContent=`${done} / ${total} 완료`;
-const pct=total?Math.round(done/total*100):0;
-document.getElementById('todoPrgPct').textContent=pct+'%';
-document.getElementById('todoPrgFill').style.width=pct+'%';
-}
-function closeTodo(){document.getElementById('todoOverlay').classList.remove('on');document.getElementById('todoSb').classList.remove('on')}
-document.getElementById('todoBtn').addEventListener('click',openTodo);
-document.getElementById('todoClose').addEventListener('click',closeTodo);
-document.getElementById('todoOverlay').addEventListener('click',closeTodo);
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('todoSb').classList.contains('on'))closeTodo()});
+
 
 load();initTheme();render(); // initial render; auth will sync Firestore data
 </script>
+<!-- Full-screen Planner View -->
+<div class="planner-view" id="plannerView">
+<div class="pl-header">
+<button class="pl-back" id="plBack">← <span>캘린더로 돌아가기</span></button>
+<div class="pl-hdr-center">
+<div class="pl-date" id="plDate"></div>
+<div class="pl-phase" id="plPhase"></div>
+</div>
+<div class="pl-hdr-nav">
+<button class="pl-nav-btn" id="plPrev">‹</button>
+<button class="pl-nav-btn" id="plNext">›</button>
+</div>
+</div>
+<div class="pl-body">
+<div>
+<div class="pl-clock-card">
+<div class="pl-card-title">⏰ 오늘의 타임테이블</div>
+<div class="pl-clock-wrap"><canvas id="plannerClock"></canvas></div>
+<div class="pl-legend" id="plLegend">
+<div class="pl-legend-item"><div class="pl-legend-dot" style="background:#6366f1"></div>수면</div>
+<div class="pl-legend-item"><div class="pl-legend-dot" style="background:#3b82f6"></div>NCS</div>
+<div class="pl-legend-item"><div class="pl-legend-dot" style="background:#ef4444"></div>한국사</div>
+<div class="pl-legend-item"><div class="pl-legend-dot" style="background:#22c55e"></div>정처기</div>
+<div class="pl-legend-item"><div class="pl-legend-dot" style="background:#eab308"></div>HSK</div>
+<div class="pl-legend-item"><div class="pl-legend-dot" style="background:#f97316"></div>식사</div>
+<div class="pl-legend-item"><div class="pl-legend-dot" style="background:#06b6d4"></div>휴식</div>
+</div>
+</div>
+<div class="pl-subj-card" style="margin-top:24px">
+<div class="pl-card-title">📊 과목별 진행률</div>
+<div id="plSubjProg"></div>
+</div>
+</div>
+<div class="pl-right">
+<div class="pl-stats">
+<div class="pl-stat-card">
+<div class="pl-donut-wrap"><canvas id="donutCanvas"></canvas><div class="pl-donut-pct" id="plStatPct">0%</div></div>
+<div class="pl-stat-info"><div class="pl-stat-label">완료율</div><div class="pl-stat-val" id="plStatDone">0 / 0</div><div class="pl-stat-sub" id="plStatSub">할 일 없음</div></div>
+</div>
+<div class="pl-stat-card">
+<div class="pl-donut-wrap" style="display:flex;align-items:center;justify-content:center"><span style="font-size:32px">📚</span></div>
+<div class="pl-stat-info"><div class="pl-stat-label">학습 시간</div><div class="pl-stat-val" id="plStatStudy">0h</div><div class="pl-stat-sub" id="plStatStudySub">오늘의 학습량</div></div>
+</div>
+</div>
+<div class="pl-todo-card">
+<div class="pl-card-title">✅ 할 일 목록</div>
+<div id="plTodoList"></div>
+</div>
+</div>
+</div>
+</div>
+<script src="todo-planner.js"></script>
 </body>
 </html>
