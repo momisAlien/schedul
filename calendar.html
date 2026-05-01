@@ -705,6 +705,13 @@ load();initTheme();render(); // initial render; auth will sync Firestore data
 <div id="plPace"></div>
 </div>
 </div>
+<div class="pl-card pl-border-purple" id="plBacklogCard" style="display:none">
+<div class="pl-card-title">⚠️ 밀린 항목 <span class="pl-backlog-count" id="plBacklogCount"></span></div>
+<div class="pl-backlog-toolbar">
+<div class="pl-backlog-filters" id="plBacklogFilters"></div>
+<button class="pl-backlog-allcheck" id="plBacklogAllCheck">✅ 전체 완료</button>
+</div>
+<div id="plBacklogList"></div>
 </div>
 </div>
 </div>

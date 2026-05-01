@@ -154,6 +154,7 @@ document.getElementById('plStatPct').textContent=pct+'%';
 drawDonut('donutCanvas',pct,'#6c5ce7');updateTimerDisplay();
 var grouped={};items.forEach(function(it){if(!grouped[it.subj])grouped[it.subj]=[];grouped[it.subj].push(it);});
 renderPace(ds,items,grouped);
+renderBacklog(ds);
 if(!items.length){document.getElementById('plTodoList').innerHTML='<div class="pl-todo-empty">📭 할 일 없음</div>';drawClock(ds);return;}
 var th='';Object.keys(grouped).forEach(function(subj){var tag=TODO_TAGS[subj]||{bg:'rgba(108,92,231,.15)',c:'#6c5ce7'};
 th+='<div class="pl-subj-group"><div class="pl-subj-group-hdr"><span class="pl-subj-group-tag" style="background:'+tag.bg+';color:'+tag.c+'">'+subj+'</span><span class="pl-subj-group-count">'+grouped[subj].filter(function(x){return todoChecked[x.id]}).length+'/'+grouped[subj].length+'</span></div>';
@@ -189,12 +190,60 @@ h+='<div class="pl-pace-grid">';
 h+='<div class="pl-pace-item"><span class="pl-subj-tag" style="background:'+tag.bg+';color:'+tag.c+'">'+s+'</span><span class="pl-pace-need">'+p.need+'</span><span class="pl-pace-dd" style="color:#fd79a8;font-weight:800">'+dd+'</span></div>';});
 h+='</div>';
 document.getElementById('plPace').innerHTML=h;}
+var _backlogFilter='all';
+function getMissedItems(ds){
+  var allD=getAllDates(),di=allD.indexOf(ds),missed=[];
+  for(var i=0;i<di;i++){var pastDs=allD[i];var ditems=getTodoForDate(pastDs);
+    ditems.forEach(function(it){if(!todoChecked[it.id])missed.push({id:it.id,subj:it.subj,text:it.text,date:pastDs});});}
+  return missed;}
+function renderBacklog(ds){
+  var card=document.getElementById('plBacklogCard');
+  var list=document.getElementById('plBacklogList');
+  var countEl=document.getElementById('plBacklogCount');
+  var filtersEl=document.getElementById('plBacklogFilters');
+  var missed=getMissedItems(ds);
+  if(!missed.length){if(card)card.style.display='none';return;}
+  card.style.display='';
+  countEl.textContent=missed.length+'개';
+  var subjs={};missed.forEach(function(it){subjs[it.subj]=(subjs[it.subj]||0)+1;});
+  var fh='<button class="pl-backlog-filter'+(_backlogFilter==='all'?' active':'')+'" data-bf="all">전체 ('+missed.length+')</button>';
+  Object.keys(subjs).forEach(function(s){var tag=TODO_TAGS[s]||{bg:'rgba(108,92,231,.15)',c:'#6c5ce7'};
+    fh+='<button class="pl-backlog-filter'+(_backlogFilter===s?' active':'')+'" data-bf="'+s+'" style="'+(_backlogFilter===s?'background:'+tag.c+';color:#fff;border-color:'+tag.c:'')+'">'+s+' ('+subjs[s]+')</button>';});
+  filtersEl.innerHTML=fh;
+  document.querySelectorAll('.pl-backlog-filter').forEach(function(btn){btn.addEventListener('click',function(){
+    _backlogFilter=btn.dataset.bf;renderBacklog(ds);});});
+  var filtered=_backlogFilter==='all'?missed:missed.filter(function(it){return it.subj===_backlogFilter;});
+  var byDate={};filtered.forEach(function(it){if(!byDate[it.date])byDate[it.date]=[];byDate[it.date].push(it);});
+  var dates=Object.keys(byDate).sort();
+  var h='';
+  dates.forEach(function(d){var dd=new Date(d+'T00:00:00');
+    var dlabel=(dd.getMonth()+1)+'월 '+dd.getDate()+'일 ('+(typeof DN!=='undefined'?DN[dd.getDay()]:'')+')';
+    var items=byDate[d];
+    h+='<div class="pl-backlog-date-group">';
+    h+='<div class="pl-backlog-date-hdr"><span class="pl-backlog-date-label">📅 '+dlabel+'</span><span class="pl-backlog-date-count">'+items.length+'개 미완료</span></div>';
+    items.forEach(function(it){var tag=TODO_TAGS[it.subj]||{bg:'rgba(108,92,231,.15)',c:'#6c5ce7'};var dn=todoChecked[it.id];
+      h+='<div class="pl-backlog-item'+(dn?' done':'')+'" data-bid="'+it.id+'" style="border-left-color:'+tag.c+'">';
+      h+='<div class="pl-backlog-cb">'+(dn?'✓':'')+'</div>';
+      h+='<div class="pl-backlog-content"><span class="pl-backlog-subj" style="background:'+tag.bg+';color:'+tag.c+'">'+it.subj+'</span>';
+      h+='<div class="pl-backlog-text">'+it.text+'</div></div>';
+      h+='</div>';});
+    h+='</div>';});
+  list.innerHTML=h;
+  document.querySelectorAll('.pl-backlog-item').forEach(function(row){row.addEventListener('click',function(){
+    var bid=row.dataset.bid;todoChecked[bid]=!todoChecked[bid];saveTodoChecked();
+    row.classList.toggle('done');row.querySelector('.pl-backlog-cb').textContent=todoChecked[bid]?'✓':'';
+    var remaining=getMissedItems(ds).length;countEl.textContent=remaining+'개';
+    if(!remaining){card.style.display='none';}
+    refreshStats(ds);});});
+  document.getElementById('plBacklogAllCheck').onclick=function(){
+    filtered.forEach(function(it){todoChecked[it.id]=true;});saveTodoChecked();renderBacklog(ds);refreshStats(ds);};}
 function refreshStats(ds){var items=getTodoForDate(ds),total=items.length,done=items.filter(function(x){return todoChecked[x.id]}).length,pct=total?Math.round(done/total*100):0;
 document.getElementById('plStatDone').textContent=done+' / '+total;
 document.getElementById('plStatSub').textContent=pct===100?'완료! 🎉':total-done+'개 남음';
 document.getElementById('plStatPct').textContent=pct+'%';drawDonut('donutCanvas',pct,'#6c5ce7');renderMiniCal();
 var grouped={};items.forEach(function(it){if(!grouped[it.subj])grouped[it.subj]=[];grouped[it.subj].push(it);});
 renderPace(ds,items,grouped);
+renderBacklog(ds);
 var ov=calcOverall(),ovEl=document.getElementById('plOverall'),oh='';
 ['NCS','한국사','정처기','HSK'].forEach(function(s){var tag=TODO_TAGS[s],exam=EXAMS[s],dd=getDday(ds,exam),data=ov[s];
 oh+='<div class="pl-ov-item"><div class="pl-ov-icon" style="background:'+tag.c+'">'+s.charAt(0)+'</div><div class="pl-ov-info"><div class="pl-ov-name">'+s+' <span class="pl-ov-exam">'+dd+'</span></div><div class="pl-ov-bar"><div class="pl-ov-fill" style="width:'+data.pct+'%;background:'+tag.c+'"></div></div></div><div class="pl-ov-pct" style="color:'+tag.c+'">'+data.pct+'%</div></div>';});
