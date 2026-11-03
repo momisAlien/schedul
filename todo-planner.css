@@ -1,4 +1,31 @@
 .planner-view{display:none;position:fixed;inset:0;z-index:1200;background:var(--bg1);animation:plannerIn .4s ease;overflow-y:auto}
+.pl-settings-heading{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pl-main>div,.pl-main,.pl-body,.pl-card{min-width:0}
+.pl-week-scroll{max-width:100%}
+.pl-settings-heading .pl-card-title{margin:0}
+.pl-settings-hint{color:var(--tx2);font-size:12px;margin:8px 0 12px;line-height:1.5}
+.pl-subject-button{font:inherit;text-align:left;cursor:pointer;width:100%;color:var(--tx1)}
+.pl-subject-button:hover{border-color:var(--ac1)}
+.pl-subject-button .pl-ov-bar,.pl-subject-button .pl-ov-fill{display:block}
+.pl-view-switch{display:flex;gap:6px;margin-top:14px}
+.pl-view-switch button{padding:10px;min-height:44px;background:var(--bg3);color:var(--tx2);border:1px solid var(--bd1);border-radius:10px;cursor:pointer}
+.pl-view-switch button[aria-pressed=true]{background:var(--ac1);color:#fff}
+.pl-week-scroll{max-height:510px;overflow:auto;border:1px solid var(--bd1);border-radius:12px}
+#plWeekGrid{min-width:520px}
+.pl-week-head,.pl-week-body{display:grid;grid-template-columns:34px repeat(7,minmax(0,1fr))}
+.pl-week-head{position:sticky;top:0;z-index:4;background:var(--bg2);border-bottom:1px solid var(--bd1);font-size:12px;text-align:center;height:36px;align-items:center}
+.pl-week-day{position:relative;height:960px;border-left:1px solid var(--bd1)}
+.pl-week-cell{display:block;width:100%;height:40px;border:0;border-bottom:1px solid var(--bd1);background:transparent;cursor:pointer}
+.pl-week-cell:hover,.pl-week-cell:focus-visible{background:var(--ac1g)}
+.pl-week-axis span{display:block;height:40px;text-align:center;font-size:11px;color:var(--tx2)}
+.pl-week-block{position:absolute;border:1px solid rgba(255,255,255,.3);border-radius:5px;padding:4px;color:white;font-size:10px;line-height:1.35;white-space:pre-wrap;overflow:hidden;text-align:left;cursor:pointer;overflow-wrap:anywhere}
+.pl-week-block:focus-visible{outline:3px solid var(--tx1);z-index:3}
+.pl-weekdays{margin:16px 0 0;border:1px solid var(--bd1);border-radius:10px;display:flex;justify-content:space-between;padding:10px;gap:3px}
+.pl-weekdays label{display:flex;flex-direction:column;align-items:center;gap:6px;margin:0;cursor:pointer;padding:4px}
+.pl-weekdays input{width:20px;height:20px;min-height:20px;padding:0;accent-color:var(--ac1)}
+.pl-time-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pl-task-dialog input[type=color]{height:46px;padding:5px}
+.pl-legend{flex-wrap:wrap}
 .pl-task-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px}
 .pl-task-heading .pl-card-title{margin:0}
 .pl-task-edit,.pl-task-dialog button{min-height:44px;padding:8px 14px;border:1px solid var(--bd1);border-radius:10px;background:var(--bg3);color:var(--tx1);font:inherit;cursor:pointer;flex-shrink:0}

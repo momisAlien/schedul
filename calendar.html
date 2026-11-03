@@ -193,7 +193,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg1);color:var(--tx1);min-h
 .dp-add{margin:6px 10px 10px}
 }
 </style>
-<link rel="stylesheet" href="todo-planner.css?v=20261103">
+<link rel="stylesheet" href="todo-planner.css?v=20261103b">
 <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore-compat.js"></script>
 </head>
@@ -657,13 +657,13 @@ load();initTheme();render(); // initial render; auth will sync Firestore data
 </div>
 <div class="pl-body">
 <div class="pl-card pl-border-red" style="border-left-color:#a855f7">
-<div class="pl-card-title">📈 전체 진행률</div>
+<div class="pl-settings-heading"><div class="pl-card-title">📈 내 과목 · 전체 진행률</div><button type="button" class="pl-task-edit" id="plSubjectAdd">＋ 과목 추가</button></div><p class="pl-settings-hint">과목 카드를 누르면 이름·시험일·목표를 수정할 수 있어요.</p><div id="plSettingsStatus" class="pl-settings-hint" role="status" aria-live="polite"></div>
 <div class="pl-overall" id="plOverall"></div>
 </div>
 <div class="pl-main">
 <div>
 <div class="pl-card pl-border-yellow" style="margin-bottom:16px">
-<div class="pl-card-title">⏰ 타임테이블</div>
+<div class="pl-settings-heading"><div class="pl-card-title">⏰ 내 시간표</div><button type="button" class="pl-task-edit" id="plBlockAdd">＋ 일정 추가</button></div><div class="pl-view-switch"><button type="button" id="plViewWeek" aria-pressed="true">주간 시간표</button><button type="button" id="plViewClock" aria-pressed="false">선택일 원형 보기</button></div><p class="pl-settings-hint">빈 칸을 눌러 추가 · 블록을 눌러 수정 · 매주 반복</p><div id="plWeekScroll" class="pl-week-scroll"><div id="plWeekGrid"></div></div><div id="plClockArea" hidden>
 <div class="pl-clock-wrap"><canvas id="plannerClock"></canvas></div>
 <div class="pl-legend">
 <div class="pl-legend-item"><div class="pl-legend-dot" style="background:#4338ca"></div>수면</div>
@@ -671,6 +671,7 @@ load();initTheme();render(); // initial render; auth will sync Firestore data
 <div class="pl-legend-item"><div class="pl-legend-dot" style="background:rgba(99,102,241,.4)"></div>근로</div>
 <div class="pl-legend-item"><div class="pl-legend-dot" style="background:#f97316"></div>식사</div>
 <div class="pl-legend-item"><div class="pl-legend-dot" style="background:#06b6d4"></div>휴식</div>
+</div>
 </div>
 </div>
 <div class="pl-card pl-border-green">
@@ -715,6 +716,7 @@ load();initTheme();render(); // initial render; auth will sync Firestore data
 </div>
 </div>
 </div>
-<script src="todo-planner.js?v=20261103"></script>
+<script src="planner-settings.js?v=20261103b"></script>
+<script src="todo-planner.js?v=20261103b"></script>
 </body>
 </html>
