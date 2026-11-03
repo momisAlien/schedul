@@ -32,10 +32,10 @@ var DAILY={
 '05-24':[['시험','🔥 정처기 필기!'],['HSK','오후 HSK 전환']]};
 var todoChecked=JSON.parse(localStorage.getItem('scedul_todo_checked')||'{}');
 var studyTimes=JSON.parse(localStorage.getItem('scedul_study_times')||'{}');
-function saveTodoChecked(){
+function saveTodoChecked(ids){
 localStorage.setItem('scedul_todo_checked',JSON.stringify(todoChecked));
 if(typeof firebase!=='undefined'&&firebase.firestore){
-firebase.firestore().collection('calendar').doc('admin').collection('planner').doc('todoChecked').set({data:todoChecked}).catch(function(e){console.error('todo sync err',e)});}}
+firebase.firestore().collection('calendar').doc('admin').collection('planner').doc('todoChecked').set({data:(ids||Object.keys(todoChecked)).reduce(function(r,id){r[id]=!!todoChecked[id];return r},{})},{merge:true}).catch(function(e){console.error('todo sync err',e)});}}
 function saveStudyTimes(){
 localStorage.setItem('scedul_study_times',JSON.stringify(studyTimes));
 if(typeof firebase!=='undefined'&&firebase.firestore){
@@ -46,20 +46,22 @@ if(typeof firebase==='undefined'||!firebase.firestore)return;
 var pRef=firebase.firestore().collection('calendar').doc('admin').collection('planner');
 pRef.doc('todoChecked').onSnapshot(function(snap){
 if(snap.exists){var d=snap.data().data;if(d){todoChecked=d;localStorage.setItem('scedul_todo_checked',JSON.stringify(d));
-if(_plannerSynced&&plannerDateStr&&document.getElementById('plannerView').classList.contains('on'))openTodo();}_plannerSynced=true;}});
+if(plannerDateStr&&document.getElementById('plannerView').classList.contains('on'))openTodo();}_plannerSynced=true;}});
 pRef.doc('studyTimes').onSnapshot(function(snap){
 if(snap.exists){var d=snap.data().data;if(d){studyTimes=d;localStorage.setItem('scedul_study_times',JSON.stringify(d));
 if(plannerDateStr&&document.getElementById('plannerView').classList.contains('on')){updateTimerDisplay();showCalStudy();renderMiniCal();}}}});
-var lc=JSON.parse(localStorage.getItem('scedul_todo_checked')||'{}');
-if(Object.keys(lc).length)pRef.doc('todoChecked').set({data:lc},{merge:true}).catch(function(){});
-var lt=JSON.parse(localStorage.getItem('scedul_study_times')||'{}');
-if(Object.keys(lt).length)pRef.doc('studyTimes').set({data:lt},{merge:true}).catch(function(){});}
+}
 var plannerDateStr=null,mcalMonth=null,mcalYear=null;
 var timerInterval=null,timerStart=null,timerElapsed=0,timerRunning=false;
-function getTodoForDate(ds){var k=ds.substring(5);var d=DAILY[k];if(!d)return[];return d.map(function(x,i){return{id:x[0]+'-'+ds+'-'+i,subj:x[0],text:x[1]}});}
+function getTodoForDate(ds){
+var items={};
+if(ds.substring(0,5)==='2026-')(DAILY[ds.substring(5)]||[]).forEach(function(x,i){var id=x[0]+'-'+ds+'-'+i;items[id]={id:id,date:ds,subj:x[0],text:x[1],order:i};});
+Object.keys(plannerTasks).forEach(function(id){var t=plannerTasks[id];delete items[id];if(t.date===ds&&!t.deleted)items[id]=Object.assign({id:id},t);});
+return Object.keys(items).map(function(id){return items[id]}).sort(function(a,b){return (a.order||0)-(b.order||0)||a.id.localeCompare(b.id)});
+}
 function getPhase(ds){if(ds>='2026-04-28'&&ds<='2026-05-08')return'Phase 1 · NCS 집중';if(ds==='2026-05-09')return'D-Day · NCS 시험';if(ds>='2026-05-10'&&ds<='2026-05-16')return'Phase 2 전반';if(ds>='2026-05-17'&&ds<='2026-05-22')return'Phase 2 후반';if(ds==='2026-05-23')return'D-Day · 한국사';if(ds==='2026-05-24')return'D-Day · 정처기';return'';}
 function getDday(ds,exam){var diff=Math.ceil((new Date(exam)-new Date(ds))/864e5);return diff>0?'D-'+diff:diff===0?'D-Day':'완료';}
-function getAllDates(){var r=[];for(var k in DAILY)r.push('2026-'+k);return r.sort();}
+function getAllDates(){var r={};for(var k in DAILY)r['2026-'+k]=true;Object.keys(plannerTasks).forEach(function(id){r[plannerTasks[id].date]=true});return Object.keys(r).filter(function(ds){return getTodoForDate(ds).length>0}).sort();}
 function calcOverall(){var all=getAllDates(),r={};['NCS','한국사','정처기','HSK'].forEach(function(s){var t=0,d=0;all.forEach(function(ds){getTodoForDate(ds).forEach(function(it){if(it.subj===s){t++;if(todoChecked[it.id])d++;}});});r[s]={total:t,done:d,pct:t?Math.round(d/t*100):0};});return r;}
 function calcDayPct(ds){var it=getTodoForDate(ds);if(!it.length)return-1;return Math.round(it.filter(function(x){return todoChecked[x.id]}).length/it.length*100);}
 function getClockBlocks(ds){var d=new Date(ds+'T00:00:00'),dow=d.getDay(),b=[];
@@ -115,7 +117,7 @@ h+='</div>';}
 var rem=(sd+days)%7;if(rem>0)for(var i=1;i<=7-rem;i++)h+='<div class="pl-mcal-day om">'+i+'</div>';
 h+='</div>';el.innerHTML=h;showCalStudy();}
 function mcalNav(dir){mcalMonth+=dir;if(mcalMonth>11){mcalMonth=0;mcalYear++}if(mcalMonth<0){mcalMonth=11;mcalYear--}renderMiniCal();}
-function plannerGo(ds){plannerDateStr=ds;if(typeof S!=='undefined')S.selDate=ds;openTodo();}
+function plannerGo(ds){if(timerRunning||timerElapsed)stopTimer();plannerDateStr=ds;if(typeof S!=='undefined')S.selDate=ds;openTodo();}
 function showCalStudy(){var el=document.getElementById('plCalStudy');if(!el)return;
 var st=studyTimes[plannerDateStr];if(st&&st>0){var mins=Math.round(st/60);el.className='pl-cal-study on';el.innerHTML='📖 선택일 학습: <span class="pl-cal-study-time">'+(mins>=60?Math.floor(mins/60)+'시간 '+(mins%60)+'분':mins+'분')+'</span>';}else{el.className='pl-cal-study';el.innerHTML='';}}
 function fmtTimer(s){var h=Math.floor(s/3600),m=Math.floor(s%3600/60),sec=Math.floor(s%60);return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0');}
@@ -139,10 +141,10 @@ document.getElementById('plTimerStart').style.display='';document.getElementById
 function openTodo(){var ds=plannerDateStr=plannerDateStr||(typeof S!=='undefined'?(S.selDate||fmt(S.cur)):new Date().toISOString().slice(0,10));
 var d=new Date(ds+'T00:00:00'),items=getTodoForDate(ds),phase=getPhase(ds);
 document.getElementById('plDate').textContent=d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일 ('+(typeof DN!=='undefined'?DN[d.getDay()]:'')+'요일)';
-document.getElementById('plPhase').textContent=phase||'일정 없는 기간';
+document.getElementById('plPhase').textContent=phase||'나의 일일 계획';
 document.getElementById('plannerView').classList.add('on');if(document.querySelector('.app'))document.querySelector('.app').style.display='none';
 if(!mcalYear){mcalMonth=d.getMonth();mcalYear=d.getFullYear();}
-renderMiniCal();resetTimerUI();
+renderMiniCal();updateTimerDisplay();
 var ov=calcOverall(),ovEl=document.getElementById('plOverall'),oh='';
 ['NCS','한국사','정처기','HSK'].forEach(function(s){var tag=TODO_TAGS[s],exam=EXAMS[s],dd=getDday(ds,exam),data=ov[s];
 oh+='<div class="pl-ov-item"><div class="pl-ov-icon" style="background:'+tag.c+'">'+s.charAt(0)+'</div><div class="pl-ov-info"><div class="pl-ov-name">'+s+' <span class="pl-ov-exam">'+dd+'</span></div><div class="pl-ov-bar"><div class="pl-ov-fill" style="width:'+data.pct+'%;background:'+tag.c+'"></div></div></div><div class="pl-ov-pct" style="color:'+tag.c+'">'+data.pct+'%</div></div>';});
@@ -159,11 +161,11 @@ if(!items.length){document.getElementById('plTodoList').innerHTML='<div class="p
 var th='';Object.keys(grouped).forEach(function(subj){var tag=TODO_TAGS[subj]||{bg:'rgba(108,92,231,.15)',c:'#6c5ce7'};
 th+='<div class="pl-subj-group"><div class="pl-subj-group-hdr"><span class="pl-subj-group-tag" style="background:'+tag.bg+';color:'+tag.c+'">'+subj+'</span><span class="pl-subj-group-count">'+grouped[subj].filter(function(x){return todoChecked[x.id]}).length+'/'+grouped[subj].length+'</span></div>';
 grouped[subj].forEach(function(it){var dn=todoChecked[it.id];
-th+='<div class="pl-todo-item'+(dn?' done':'')+'" data-tid="'+it.id+'" style="border-left:3px solid '+tag.c+'"><div class="pl-todo-cb">'+(dn?'✓':'')+'</div><div class="pl-todo-content"><span class="pl-todo-subj" style="background:'+tag.bg+';color:'+tag.c+'">'+subj+'</span><div class="pl-todo-text">'+it.text+'</div></div></div>';});
+th+='<div class="pl-todo-item'+(dn?' done':'')+'" data-tid="'+it.id+'" style="border-left:3px solid '+tag.c+'"><div class="pl-todo-cb">'+(dn?'✓':'')+'</div><div class="pl-todo-content"><span class="pl-todo-subj" style="background:'+tag.bg+';color:'+tag.c+'">'+subj+'</span><div class="pl-todo-text">'+plannerEscape(it.text)+'</div></div><button type="button" class="pl-task-edit" aria-label="할 일 수정">수정</button></div>';});
 th+='</div>';});
 document.getElementById('plTodoList').innerHTML=th;
-document.querySelectorAll('.pl-todo-item').forEach(function(row){row.addEventListener('click',function(){
-var tid=row.dataset.tid;todoChecked[tid]=!todoChecked[tid];saveTodoChecked();
+document.querySelectorAll('.pl-todo-item').forEach(function(row){row.addEventListener('click',function(e){
+var tid=row.dataset.tid;if(e.target.closest('.pl-task-edit')){openTaskEditor(tid);return;}todoChecked[tid]=!todoChecked[tid];saveTodoChecked([tid]);
 row.classList.toggle('done');row.querySelector('.pl-todo-cb').textContent=todoChecked[tid]?'✓':'';
 refreshStats(ds);});});
 drawClock(ds);}
@@ -171,7 +173,7 @@ function renderPace(ds,items,grouped){
 var total=items.length,done=items.filter(function(x){return todoChecked[x.id]}).length;
 var must=items.length?items[0].text:'—';
 var status,statusC;if(done===total&&total>0){status='완료 ✅';statusC='#22c55e';}else if(done>=total*0.5){status='양호 👍';statusC='#3b82f6';}else{status='주의 ⚠️';statusC='#eab308';}
-var allD=getAllDates(),di=allD.indexOf(ds),missed=0;
+var allD=getAllDates(),di=allD.filter(function(d){return d<ds}).length,missed=0;
 for(var i=0;i<di;i++){var ditems=getTodoForDate(allD[i]);ditems.forEach(function(it){if(!todoChecked[it.id])missed++;});}
 var missedTxt=missed>0?missed+'개 미완료':'없음';
 var tomorrowDs=null;if(di>=0&&di<allD.length-1)tomorrowDs=allD[di+1];
@@ -179,7 +181,7 @@ var adjTxt='없음';if(missed>3)adjTxt='밀린 '+missed+'개 분산 필요';else
 var PACE={NCS:{need:'하루 1회 필요',exam:'05-09'},한국사:{need:'하루 2강 필요',exam:'05-23'},정처기:{need:'격일 1과목 필요',exam:'05-24'},HSK:{need:'유지 루틴',exam:'06-14'}};
 var h='<table class="pl-pace-table">';
 h+='<tr><td class="pl-pace-label">완료</td><td class="pl-pace-val">'+done+' / '+total+'</td></tr>';
-h+='<tr><td class="pl-pace-label">필수</td><td class="pl-pace-val" style="font-weight:700">'+must+'</td></tr>';
+h+='<tr><td class="pl-pace-label">필수</td><td class="pl-pace-val" style="font-weight:700">'+plannerEscape(must)+'</td></tr>';
 h+='<tr><td class="pl-pace-label">현재 상태</td><td class="pl-pace-val" style="color:'+statusC+';font-weight:800">'+status+'</td></tr>';
 h+='<tr><td class="pl-pace-label">밀림</td><td class="pl-pace-val" style="color:'+(missed>0?'#ef4444':'#22c55e')+'">'+missedTxt+'</td></tr>';
 h+='<tr><td class="pl-pace-label">내일 보정</td><td class="pl-pace-val">'+adjTxt+'</td></tr>';
@@ -192,7 +194,7 @@ h+='</div>';
 document.getElementById('plPace').innerHTML=h;}
 var _backlogFilter='all';
 function getMissedItems(ds){
-  var allD=getAllDates(),di=allD.indexOf(ds),missed=[];
+  var allD=getAllDates(),di=allD.filter(function(d){return d<ds}).length,missed=[];
   for(var i=0;i<di;i++){var pastDs=allD[i];var ditems=getTodoForDate(pastDs);
     ditems.forEach(function(it){if(!todoChecked[it.id])missed.push({id:it.id,subj:it.subj,text:it.text,date:pastDs});});}
   return missed;}
@@ -225,18 +227,18 @@ function renderBacklog(ds){
       h+='<div class="pl-backlog-item'+(dn?' done':'')+'" data-bid="'+it.id+'" style="border-left-color:'+tag.c+'">';
       h+='<div class="pl-backlog-cb">'+(dn?'✓':'')+'</div>';
       h+='<div class="pl-backlog-content"><span class="pl-backlog-subj" style="background:'+tag.bg+';color:'+tag.c+'">'+it.subj+'</span>';
-      h+='<div class="pl-backlog-text">'+it.text+'</div></div>';
+      h+='<div class="pl-backlog-text">'+plannerEscape(it.text)+'</div></div>';
       h+='</div>';});
     h+='</div>';});
   list.innerHTML=h;
   document.querySelectorAll('.pl-backlog-item').forEach(function(row){row.addEventListener('click',function(){
-    var bid=row.dataset.bid;todoChecked[bid]=!todoChecked[bid];saveTodoChecked();
+    var bid=row.dataset.bid;todoChecked[bid]=!todoChecked[bid];saveTodoChecked([bid]);
     row.classList.toggle('done');row.querySelector('.pl-backlog-cb').textContent=todoChecked[bid]?'✓':'';
     var remaining=getMissedItems(ds).length;countEl.textContent=remaining+'개';
     if(!remaining){card.style.display='none';}
     refreshStats(ds);});});
   document.getElementById('plBacklogAllCheck').onclick=function(){
-    filtered.forEach(function(it){todoChecked[it.id]=true;});saveTodoChecked();renderBacklog(ds);refreshStats(ds);};}
+    filtered.forEach(function(it){todoChecked[it.id]=true;});saveTodoChecked(filtered.map(function(it){return it.id}));renderBacklog(ds);refreshStats(ds);};}
 function refreshStats(ds){var items=getTodoForDate(ds),total=items.length,done=items.filter(function(x){return todoChecked[x.id]}).length,pct=total?Math.round(done/total*100):0;
 document.getElementById('plStatDone').textContent=done+' / '+total;
 document.getElementById('plStatSub').textContent=pct===100?'완료! 🎉':total-done+'개 남음';
@@ -249,12 +251,70 @@ var ov=calcOverall(),ovEl=document.getElementById('plOverall'),oh='';
 oh+='<div class="pl-ov-item"><div class="pl-ov-icon" style="background:'+tag.c+'">'+s.charAt(0)+'</div><div class="pl-ov-info"><div class="pl-ov-name">'+s+' <span class="pl-ov-exam">'+dd+'</span></div><div class="pl-ov-bar"><div class="pl-ov-fill" style="width:'+data.pct+'%;background:'+tag.c+'"></div></div></div><div class="pl-ov-pct" style="color:'+tag.c+'">'+data.pct+'%</div></div>';});
 ovEl.innerHTML=oh;}
 function closeTodo(){document.getElementById('plannerView').classList.remove('on');if(document.querySelector('.app'))document.querySelector('.app').style.display='';stopTimer();}
-function plannerNav(dir){if(timerRunning)stopTimer();var d=new Date(plannerDateStr+'T00:00:00');d.setDate(d.getDate()+dir);
+function plannerNav(dir){if(timerRunning||timerElapsed)stopTimer();var d=new Date(plannerDateStr+'T00:00:00');d.setDate(d.getDate()+dir);
 plannerDateStr=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 if(typeof S!=='undefined')S.selDate=plannerDateStr;mcalMonth=d.getMonth();mcalYear=d.getFullYear();openTodo();}
+// Defaults remain available with their original IDs; edits override one item at a time.
+var plannerTasks={};
+try{plannerTasks=JSON.parse(localStorage.getItem('scedul_tasks_v1')||'{}')}catch(e){}
+var taskEditId=null,taskRef=null;
+function plannerEscape(v){return String(v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]});}
+function taskStatus(message){document.getElementById('plTaskSync').textContent=message;}
+function refreshTaskView(){if(plannerDateStr&&document.getElementById('plannerView').classList.contains('on'))openTodo();}
+function initTaskSync(){
+taskRef=firebase.firestore().collection('calendar').doc('admin').collection('tasks');
+taskRef.onSnapshot({includeMetadataChanges:true},function(snap){
+plannerTasks={};snap.forEach(function(doc){plannerTasks[doc.id]=doc.data()});
+localStorage.setItem('scedul_tasks_v1',JSON.stringify(plannerTasks));
+taskStatus(snap.metadata.hasPendingWrites?'저장 대기 중 · 인터넷 연결 시 동기화':snap.metadata.fromCache?'연결 중 · 저장된 계획 표시':'모든 기기에 동기화됨');refreshTaskView();
+},function(e){taskStatus('동기화 실패 · 연결을 확인하고 새로고침해 주세요');console.error(e)});
+}
+function openTaskEditor(id){
+var item=id?getTodoForDate(plannerDateStr).find(function(t){return t.id===id}):null;
+if(id&&!item)return;
+taskEditId=id||null;
+document.getElementById('plTaskTitle').textContent=item?'할 일 수정':'할 일 추가';
+document.getElementById('plTaskDate').value=item?item.date:plannerDateStr;
+document.getElementById('plTaskSubject').value=item?item.subj:'NCS';
+document.getElementById('plTaskText').value=item?item.text:'';
+document.getElementById('plTaskDelete').hidden=!item;
+document.getElementById('plTaskDialog').showModal();
+document.getElementById('plTaskText').focus();
+}
+function writeTask(id,data){
+var previous=plannerTasks[id];plannerTasks[id]=data;
+taskStatus('저장 대기 중 · 인터넷 연결 시 동기화');refreshTaskView();
+taskRef.doc(id).set(data).then(function(){taskStatus('모든 기기에 동기화됨')}).catch(function(e){
+if(previous)plannerTasks[id]=previous;else delete plannerTasks[id];refreshTaskView();
+taskStatus('저장 실패 · 다시 시도해 주세요');alert('할 일을 저장하지 못했습니다. 연결 상태를 확인하고 다시 시도해 주세요.');console.error(e);
+});
+}
+function initTaskEditor(){
+var dialog=document.createElement('dialog');dialog.id='plTaskDialog';dialog.className='pl-task-dialog';
+dialog.innerHTML='<form id="plTaskForm"><h2 id="plTaskTitle">할 일 추가</h2><label for="plTaskDate">날짜</label><input id="plTaskDate" type="date" required><label for="plTaskSubject">과목</label><select id="plTaskSubject"></select><label for="plTaskText">할 일</label><textarea id="plTaskText" rows="4" maxlength="1000" required placeholder="할 일을 입력하세요"></textarea><div class="pl-task-actions"><button type="button" id="plTaskDelete">삭제</button><button type="button" id="plTaskCancel">취소</button><button type="submit" class="pl-task-save">저장</button></div></form>';
+document.body.appendChild(dialog);
+Object.keys(TODO_TAGS).concat(['기타']).forEach(function(s){var o=document.createElement('option');o.value=s;o.textContent=s;document.getElementById('plTaskSubject').appendChild(o)});
+document.getElementById('plTaskAdd').onclick=function(){openTaskEditor()};
+document.getElementById('plTaskCancel').onclick=function(){dialog.close()};
+dialog.addEventListener('keydown',function(e){e.stopPropagation()});
+document.getElementById('plTaskForm').onsubmit=function(e){
+e.preventDefault();var text=document.getElementById('plTaskText').value.trim();if(!text){document.getElementById('plTaskText').focus();return;}
+var old=taskEditId?getTodoForDate(plannerDateStr).find(function(t){return t.id===taskEditId}):null;
+if(taskEditId&&!old){alert('다른 기기에서 변경된 항목입니다. 목록을 확인해 주세요.');dialog.close();return;}
+var id=taskEditId||taskRef.doc().id;
+var data={date:document.getElementById('plTaskDate').value,subj:document.getElementById('plTaskSubject').value,text:text,order:old?old.order:Date.now(),deleted:false};
+dialog.close();writeTask(id,data);
+};
+document.getElementById('plTaskDelete').onclick=function(){
+var old=getTodoForDate(plannerDateStr).find(function(t){return t.id===taskEditId});if(!old){dialog.close();return;}
+if(!confirm('이 할 일을 삭제하시겠습니까?'))return;
+var data=Object.assign({},old,{deleted:true});delete data.id;dialog.close();writeTask(taskEditId,data);
+};
+}
+
 (function(){
-initPlannerSync();
-document.getElementById('todoBtn').addEventListener('click',openTodo);
+initTaskEditor();initTaskSync();initPlannerSync();
+document.getElementById('todoBtn').addEventListener('click',function(){plannerDateStr=S.selDate||fmt(S.cur);openTodo()});
 document.getElementById('plBack').addEventListener('click',closeTodo);
 document.getElementById('plPrev').addEventListener('click',function(){plannerNav(-1)});
 document.getElementById('plNext').addEventListener('click',function(){plannerNav(1)});
@@ -262,6 +322,6 @@ document.getElementById('plTimerStart').addEventListener('click',startTimer);
 document.getElementById('plTimerPause').addEventListener('click',pauseTimer);
 document.getElementById('plTimerResume').addEventListener('click',resumeTimer);
 document.getElementById('plTimerStop').addEventListener('click',stopTimer);
-document.addEventListener('keydown',function(e){if(document.getElementById('plannerView').classList.contains('on')){if(e.key==='Escape')closeTodo();if(e.key==='ArrowLeft')plannerNav(-1);if(e.key==='ArrowRight')plannerNav(1);}});
+document.addEventListener('keydown',function(e){if(document.getElementById('plTaskDialog').open||/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;if(document.getElementById('plannerView').classList.contains('on')){if(e.key==='Escape')closeTodo();if(e.key==='ArrowLeft')plannerNav(-1);if(e.key==='ArrowRight')plannerNav(1);}});
 window.addEventListener('resize',function(){if(plannerDateStr&&document.getElementById('plannerView').classList.contains('on'))drawClock(plannerDateStr)});
 })();

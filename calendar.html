@@ -193,7 +193,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg1);color:var(--tx1);min-h
 .dp-add{margin:6px 10px 10px}
 }
 </style>
-<link rel="stylesheet" href="todo-planner.css">
+<link rel="stylesheet" href="todo-planner.css?v=20261103">
 <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore-compat.js"></script>
 </head>
@@ -697,7 +697,7 @@ load();initTheme();render(); // initial render; auth will sync Firestore data
 <button class="pl-timer-btn pl-timer-resume" id="plTimerResume" style="display:none">▶ 재개</button>
 <button class="pl-timer-btn pl-timer-stop" id="plTimerStop" style="display:none">⏹ 완료</button>
 </div>
-<div class="pl-card-title" style="margin-top:16px">✅ 할 일 목록</div>
+<div class="pl-task-heading"><div class="pl-card-title">✅ 할 일 목록</div><button type="button" id="plTaskAdd" class="pl-task-edit">＋ 추가</button></div><div id="plTaskSync" role="status" aria-live="polite"></div>
 <div id="plTodoList"></div>
 </div>
 <div class="pl-card pl-border-blue">
@@ -715,6 +715,6 @@ load();initTheme();render(); // initial render; auth will sync Firestore data
 </div>
 </div>
 </div>
-<script src="todo-planner.js"></script>
+<script src="todo-planner.js?v=20261103"></script>
 </body>
 </html>

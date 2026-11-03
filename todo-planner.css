@@ -1,4 +1,18 @@
 .planner-view{display:none;position:fixed;inset:0;z-index:1200;background:var(--bg1);animation:plannerIn .4s ease;overflow-y:auto}
+.pl-task-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px}
+.pl-task-heading .pl-card-title{margin:0}
+.pl-task-edit,.pl-task-dialog button{min-height:44px;padding:8px 14px;border:1px solid var(--bd1);border-radius:10px;background:var(--bg3);color:var(--tx1);font:inherit;cursor:pointer;flex-shrink:0}
+#plTaskSync{font-size:12px;color:var(--tx2);margin:8px 0 14px}
+.pl-task-dialog{width:min(460px,calc(100vw - 28px));max-height:85vh;overflow:auto;box-sizing:border-box;border:1px solid var(--bd1);border-radius:18px;padding:24px;background:var(--bg2);color:var(--tx1);margin:auto;cursor:auto}
+.pl-task-dialog::backdrop{background:rgba(0,0,0,.65)}
+.pl-task-dialog h2{font-size:20px;margin:0 0 20px}
+.pl-task-dialog label{display:block;margin:14px 0 6px;font-size:14px}
+.pl-task-dialog input,.pl-task-dialog select,.pl-task-dialog textarea{display:block;box-sizing:border-box;width:100%;min-width:0;padding:12px;border:1px solid var(--bd1);border-radius:10px;background:var(--bg3);color:var(--tx1);font:inherit;font-size:16px}
+.pl-task-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}
+.pl-task-actions .pl-task-save{background:var(--ac1);color:white}
+#plTaskDelete{margin-right:auto;color:#ef4444}
+#plTaskDelete[hidden]{display:none}
+.pl-todo-text,.pl-backlog-text{overflow-wrap:anywhere;white-space:pre-wrap}
 .planner-view.on{display:block}
 @keyframes plannerIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
 .pl-header{padding:12px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border-bottom:1px solid var(--bd1);position:sticky;top:0;z-index:10;backdrop-filter:blur(12px)}
