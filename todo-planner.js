@@ -85,11 +85,11 @@ c.beginPath();c.moveTo(cx+Math.cos(a)*tickIn,cy+Math.sin(a)*tickIn);c.lineTo(cx+
 c.strokeStyle=tx3;c.lineWidth=h%6===0?2:1;c.stroke();
 if(h%3===0){c.save();c.font='bold 11px Inter,sans-serif';c.fillStyle=tx2;c.textAlign='center';c.textBaseline='middle';
 c.fillText(h+'',cx+Math.cos(a)*(R+32),cy+Math.sin(a)*(R+32));c.restore();}}
-var gr=c.createRadialGradient(cx,cy,0,cx,cy,12);gr.addColorStop(0,'#6c5ce7');gr.addColorStop(1,'#a29bfe');
+var gr=c.createRadialGradient(cx,cy,0,cx,cy,12);gr.addColorStop(0,'#71968f');gr.addColorStop(1,'#71968f');
 c.beginPath();c.arc(cx,cy,8,0,Math.PI*2);c.fillStyle=gr;c.fill();
 var now=new Date(),nh=now.getHours()+now.getMinutes()/60,na=(nh/24)*Math.PI*2-Math.PI/2;
 c.beginPath();c.moveTo(cx,cy);c.lineTo(cx+Math.cos(na)*(R-14),cy+Math.sin(na)*(R-14));
-c.strokeStyle='#fd79a8';c.lineWidth=2;c.lineCap='round';c.stroke();}
+c.strokeStyle='#bccbc7';c.lineWidth=2;c.lineCap='round';c.stroke();}
 function drawDonut(id,pct,col){var cv=document.getElementById(id);if(!cv)return;var dpr=window.devicePixelRatio||1;
 cv.width=50*dpr;cv.height=50*dpr;cv.style.width='50px';cv.style.height='50px';
 var c=cv.getContext('2d');c.scale(dpr,dpr);
@@ -137,20 +137,20 @@ document.getElementById('plTimerStart').style.display='';document.getElementById
 function openTodo(){var ds=plannerDateStr=plannerDateStr||(typeof S!=='undefined'?(S.selDate||fmt(S.cur)):new Date().toISOString().slice(0,10));
 var d=new Date(ds+'T00:00:00'),items=getTodoForDate(ds),phase='요일별 시간표와 과목을 자유롭게 편집하세요';
 document.getElementById('plDate').textContent=d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일 ('+(typeof DN!=='undefined'?DN[d.getDay()]:'')+'요일)';
-document.getElementById('plPhase').textContent=phase||'나의 일일 계획';
+document.getElementById('plPhase').textContent='';
 document.getElementById('plannerView').classList.add('on');if(document.querySelector('.app'))document.querySelector('.app').style.display='none';
 if(!mcalYear){mcalMonth=d.getMonth();mcalYear=d.getFullYear();}
 renderMiniCal();updateTimerDisplay();
 renderSubjects(ds);renderWeekly();
 var total=items.length,done=items.filter(function(x){return todoChecked[x.id]}).length,pct=total?Math.round(done/total*100):0;
 document.getElementById('plStatDone').textContent=done+' / '+total;
-document.getElementById('plStatSub').textContent=pct===100?'완료! 🎉':total?total-done+'개 남음':'없음';
+document.getElementById('plStatSub').textContent=pct===100?'완료':total?total-done+'개 남음':'없음';
 document.getElementById('plStatPct').textContent=pct+'%';
-drawDonut('donutCanvas',pct,'#6c5ce7');updateTimerDisplay();
+drawDonut('donutCanvas',pct,'#71968f');updateTimerDisplay();
 var grouped={};items.forEach(function(it){if(!grouped[it.subj])grouped[it.subj]=[];grouped[it.subj].push(it);});
 renderPace(ds,items,grouped);
 renderBacklog(ds);
-if(!items.length){document.getElementById('plTodoList').innerHTML='<div class="pl-todo-empty">📭 할 일 없음</div>';drawClock(ds);return;}
+if(!items.length){document.getElementById('plTodoList').innerHTML='<div class="pl-todo-empty">할 일 없음</div>';drawClock(ds);return;}
 var th='';Object.keys(grouped).forEach(function(subj){var tag=subjectTag(subj);
 th+='<div class="pl-subj-group"><div class="pl-subj-group-hdr"><span class="pl-subj-group-tag" style="background:'+tag.bg+';color:'+tag.c+'">'+subjectLabel(subj)+'</span><span class="pl-subj-group-count">'+grouped[subj].filter(function(x){return todoChecked[x.id]}).length+'/'+grouped[subj].length+'</span></div>';
 grouped[subj].forEach(function(it){var dn=todoChecked[it.id];
@@ -165,7 +165,7 @@ drawClock(ds);}
 function renderPace(ds,items,grouped){
 var total=items.length,done=items.filter(function(x){return todoChecked[x.id]}).length;
 var must=items.length?items[0].text:'—';
-var status,statusC;if(done===total&&total>0){status='완료 ✅';statusC='#22c55e';}else if(done>=total*0.5){status='양호 👍';statusC='#3b82f6';}else{status='주의 ⚠️';statusC='#eab308';}
+var status,statusC;if(done===total&&total>0){status='완료';statusC='#22c55e';}else if(done>=total*0.5){status='양호';statusC='#3b82f6';}else{status='진행 중';statusC='#eab308';}
 var allD=getAllDates(),di=allD.filter(function(d){return d<ds}).length,missed=0;
 for(var i=0;i<di;i++){var ditems=getTodoForDate(allD[i]);ditems.forEach(function(it){if(!todoChecked[it.id])missed++;});}
 var missedTxt=missed>0?missed+'개 미완료':'없음';
@@ -234,8 +234,8 @@ function renderBacklog(ds){
     filtered.forEach(function(it){todoChecked[it.id]=true;});saveTodoChecked(filtered.map(function(it){return it.id}));renderBacklog(ds);refreshStats(ds);};}
 function refreshStats(ds){var items=getTodoForDate(ds),total=items.length,done=items.filter(function(x){return todoChecked[x.id]}).length,pct=total?Math.round(done/total*100):0;
 document.getElementById('plStatDone').textContent=done+' / '+total;
-document.getElementById('plStatSub').textContent=pct===100?'완료! 🎉':total-done+'개 남음';
-document.getElementById('plStatPct').textContent=pct+'%';drawDonut('donutCanvas',pct,'#6c5ce7');renderMiniCal();
+document.getElementById('plStatSub').textContent=pct===100?'완료':total-done+'개 남음';
+document.getElementById('plStatPct').textContent=pct+'%';drawDonut('donutCanvas',pct,'#71968f');renderMiniCal();
 var grouped={};items.forEach(function(it){if(!grouped[it.subj])grouped[it.subj]=[];grouped[it.subj].push(it);});
 renderPace(ds,items,grouped);
 renderBacklog(ds);
@@ -249,7 +249,7 @@ var plannerTasks={};
 try{plannerTasks=JSON.parse(localStorage.getItem('scedul_tasks_v1')||'{}')}catch(e){}
 var taskEditId=null,taskRef=null;
 function plannerEscape(v){return String(v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]});}
-function taskStatus(message){document.getElementById('plTaskSync').textContent=message;}
+function taskStatus(message){var el=document.getElementById('plTaskSync');el.textContent=/실패/.test(message)?message:'';el.hidden=!el.textContent;}
 function refreshTaskView(){if(plannerDateStr&&document.getElementById('plannerView').classList.contains('on'))openTodo();}
 function initTaskSync(){
 taskRef=firebase.firestore().collection('calendar').doc('admin').collection('tasks');

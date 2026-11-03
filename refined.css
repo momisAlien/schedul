@@ -1,0 +1,57 @@
+:root{color-scheme:dark;--bg1:#111416;--bg2:#191d20;--bg3:#202528;--bg4:#282f32;--bg5:#323a3e;--tx1:#e8edeb;--tx2:#a0aaa8;--tx3:#7d8b88;--bd1:#2d3538;--bd2:#46534f;--ac1:#688f87;--ac2:#87a79f;--ac1g:rgba(104,143,135,.14);--todBg:rgba(104,143,135,.08);--sh1:0 4px 18px rgba(0,0,0,.08);--sh2:0 12px 40px rgba(0,0,0,.18);--sun:#b98d87;--sat:#8d9fb7;--r3:18px;--r4:20px}
+[data-theme=light]{color-scheme:light;--bg1:#f4f5f2;--bg2:#fff;--bg3:#f5f6f3;--bg4:#e9ede8;--bg5:#dce3dc;--tx1:#263530;--tx2:#61736a;--tx3:#829088;--bd1:#e0e6df;--bd2:#bfccc1;--ac1:#4b7568;--ac2:#709286;--ac1g:rgba(75,117,104,.1);--todBg:rgba(75,117,104,.06);--sh1:0 4px 20px rgba(35,55,42,.025);--sun:#a57670;--sat:#73859b;--modal-bg:#fff}
+body{font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;letter-spacing:-.02em;cursor:auto}
+button,[role=button],.co,.dc,.pl-mcal-day{cursor:pointer}
+button,input,select,textarea{font-family:inherit}
+button:focus-visible{outline:2px solid var(--ac2);outline-offset:3px}
+.logo{background:none;color:var(--tx1);-webkit-text-fill-color:currentColor;font-size:20px;font-weight:650;letter-spacing:.16em}
+.pl-date{background:none;-webkit-text-fill-color:currentColor;color:var(--tx1);font-size:20px;font-weight:600;letter-spacing:-.04em}
+.hdr,.cal,.wv,.dv,.dpanel{box-shadow:none}
+.hdr{padding:18px 24px;background:transparent;border:0}
+.app{gap:18px;padding:18px 24px;height:100dvh}
+.abtn,.bp,.dp-add{background:var(--ac1);box-shadow:none}
+.nb,.tbtn,.theme-btn,.abtn,.btn,.vt,.pl-task-edit{border-radius:10px;font-weight:500}
+.vt.on{box-shadow:none}
+.nb:hover,.abtn:hover,.theme-btn:hover,.ep:hover,.co:hover,.dp-add:hover,.bp:hover,.ev-card:hover,.pl-ov-item:hover,.pl-todo-item:hover,.pl-backlog-item:hover{transform:none;box-shadow:none}
+.co.sel{background:var(--ac1)!important;color:white!important}
+.sync-dot.on,.sync-dot.loading{animation:none}.sync-dot.on{background:var(--ac1)}
+.sync-area{border:0;background:transparent;font-weight:400}
+.planner-view{animation:none;background:var(--bg1)}
+.pl-header{padding:20px 32px;background:var(--bg1);backdrop-filter:none;border-bottom:1px solid var(--bd1)}
+.pl-phase:empty,#plSettingsStatus:empty,#plTaskSync:empty{display:none}
+.pl-body{padding:28px 32px 50px;gap:24px}
+.pl-main{gap:24px;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.pl-card{border:1px solid var(--bd1)!important;border-radius:18px;padding:24px;box-shadow:none;background:var(--bg2)}
+.pl-card::before,.pl-card::after{display:none}
+.pl-card-title{font-size:14px;font-weight:600;letter-spacing:-.02em;color:var(--tx1)}
+.pl-settings-heading{gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.pl-settings-heading .pl-card-title{margin-right:auto}
+.pl-overall{gap:12px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.pl-ov-item{padding:16px;border:1px solid var(--bd1);background:var(--bg2);gap:12px}
+.pl-ov-icon{border-radius:12px;font-weight:500;filter:saturate(.65);width:36px;height:36px;font-size:17px}
+.pl-ov-name{font-weight:500;font-size:13px}.pl-ov-exam{background:var(--bg3);color:var(--tx2);font-weight:400;font-size:10px!important;padding:3px 5px!important}
+.pl-ov-pct{font-size:14px;font-weight:500;color:var(--tx2)!important}
+.pl-ov-bar{height:3px;background:var(--bd1);margin-top:10px}.pl-ov-fill{filter:saturate(.6)}
+.pl-back,.pl-nav-btn{background:transparent;border-color:var(--bd1);border-radius:10px}
+.pl-clock-wrap{padding:10px 0 20px}
+.pl-legend{display:flex;flex-direction:column;gap:0;align-items:stretch}
+.pl-plan-block{display:flex;align-items:center;gap:10px;width:100%;padding:13px 0;background:transparent;border:0;border-bottom:1px solid var(--bd1);font:inherit;font-size:13px;color:var(--tx1);text-align:left}
+.pl-plan-block:last-child{border-bottom:0}.pl-plan-block:hover{background:var(--bg3)}
+.pl-plan-dot{width:7px;height:7px;border-radius:50%;flex:none;filter:saturate(.65)}
+.pl-plan-block time{margin-left:auto;color:var(--tx2);font-size:12px;font-variant-numeric:tabular-nums}
+.pl-plan-block small{display:block;color:var(--tx3);margin-top:5px}
+.pl-stats{gap:16px}.pl-stat-card{border-radius:12px;border-color:var(--bd1);background:var(--bg3);box-shadow:none}
+.pl-stat-val{font-weight:500}.pl-timer-display{color:var(--tx1);font-weight:500;letter-spacing:.02em;font-variant-numeric:tabular-nums}
+.pl-stat-card::after{display:none}
+.pl-timer-btn{border-radius:9px;font-weight:500}.pl-timer-start{color:var(--ac2);border-color:var(--bd2);background:var(--ac1g)}
+.pl-todo-item,.pl-backlog-item{background:transparent;border-color:var(--bd1);border-left-width:1px;border-radius:10px;box-shadow:none}
+.pl-todo-cb,.pl-backlog-cb{border-radius:50%}.pl-todo-item.done .pl-todo-cb,.pl-backlog-item.done .pl-backlog-cb{background:var(--ac1);border-color:var(--ac1)}
+.pl-subj-group-tag,.pl-todo-subj,.pl-backlog-subj,.pl-subj-tag{filter:saturate(.6);font-weight:500}
+.pl-pace-item,.pl-backlog-date-hdr{background:var(--bg3);border-color:var(--bd1)}
+.pl-pace-val,.pl-pace-dd{font-weight:500!important;color:var(--tx2)!important}
+.pl-mcal-day.sel{background:var(--ac1)!important;box-shadow:none}.pl-mcal-day{border-radius:10px}
+.pl-task-dialog{box-shadow:var(--sh2);padding:24px;border-radius:20px}.pl-task-dialog::backdrop{background:rgba(8,14,12,.65);backdrop-filter:blur(4px)}
+.pl-task-dialog h2{font-weight:550;font-size:18px}.pl-task-dialog button{font-size:13px}
+@media(max-width:1000px){.pl-main{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.app{padding:8px;gap:8px}.hdr{padding:10px 6px;row-gap:12px}.pl-header{padding:16px 14px;padding-top:max(16px,env(safe-area-inset-top))}.pl-date{font-size:16px}.pl-body{padding:18px 14px 40px;gap:18px}.pl-card{padding:18px;border-radius:16px}.pl-overall{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.pl-ov-item{padding:12px;display:grid;grid-template-columns:28px 1fr;gap:8px}.pl-ov-icon{width:28px;height:28px;border-radius:8px;font-size:14px}.pl-ov-info{min-width:0}.pl-ov-name{font-size:11px;overflow-wrap:anywhere}.pl-ov-exam{display:block;width:fit-content;margin:4px 0 0}.pl-ov-pct{grid-column:2;font-size:12px}.pl-settings-heading .pl-task-edit{padding:8px 10px;font-size:12px}.pl-task-heading{gap:8px}.pl-stat-card{padding:12px}.pl-timer-display{font-size:17px}.pl-plan-block{font-size:13px}.pl-plan-block time{font-size:11px}.sync-area{display:none}.logo{font-size:15px}.tbtn{font-size:11px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
