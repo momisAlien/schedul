@@ -161,7 +161,7 @@ document.querySelectorAll('.pl-todo-item').forEach(function(row){row.addEventLis
 var tid=row.dataset.tid;if(e.target.closest('.pl-task-edit')){openTaskEditor(tid);return;}todoChecked[tid]=!todoChecked[tid];saveTodoChecked([tid]);
 row.classList.toggle('done');row.querySelector('.pl-todo-cb').textContent=todoChecked[tid]?'✓':'';
 refreshStats(ds);});});
-drawClock(ds);}
+drawClock(ds);focusWidgetTask();}
 function renderPace(ds,items,grouped){
 var total=items.length,done=items.filter(function(x){return todoChecked[x.id]}).length;
 var must=items.length?items[0].text:'—';
@@ -295,6 +295,10 @@ var x=0,y=0,swiped=false;list.ontouchstart=function(e){x=e.touches[0].clientX;y=
 var all=document.getElementById('plBacklogAllCheck');all.textContent='이 날짜 완료';all.onclick=function(){items.forEach(function(it){todoChecked[it.id]=true});saveTodoChecked(items.map(function(it){return it.id}));refreshStats(ds)};
 }
 
+var widgetFocusedTask=null;
+function openWidgetLink(){var parts=location.hash.slice(1).split('&');if(parts[0]!=='planner')return;var params=new URLSearchParams(parts.slice(1).join('&')),day=params.get('date');if(timerRunning||timerElapsed)stopTimer();plannerDateStr=day&&/^\d{4}-\d{2}-\d{2}$/.test(day)&&!isNaN(Date.parse(day+'T00:00:00'))?day:kstDay();S.selDate=plannerDateStr;widgetFocusedTask=null;openTodo()}
+function focusWidgetTask(){var parts=location.hash.slice(1).split('&');if(parts[0]!=='planner')return;var id=new URLSearchParams(parts.slice(1).join('&')).get('task');if(!id)return;var row=Array.from(document.querySelectorAll('.pl-todo-item')).find(function(el){return el.dataset.tid===id});if(row){row.classList.add('widget-task-focus');if(widgetFocusedTask!==id){row.scrollIntoView({block:'center'});widgetFocusedTask=id}}}
+
 (function(){
 initDayRefresh();initTaskEditor();initPlannerSettings();initTaskSync();initPlannerSync();
 document.getElementById('todoBtn').addEventListener('click',function(){plannerDateStr=S.selDate||kstDay();openTodo()});
@@ -306,6 +310,6 @@ document.getElementById('plTimerPause').addEventListener('click',pauseTimer);
 document.getElementById('plTimerResume').addEventListener('click',resumeTimer);
 document.getElementById('plTimerStop').addEventListener('click',stopTimer);
 document.addEventListener('keydown',function(e){if(document.querySelector('dialog[open]')||/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;if(document.getElementById('plannerView').classList.contains('on')){if(e.key==='Escape')closeTodo();if(e.key==='ArrowLeft')plannerNav(-1);if(e.key==='ArrowRight')plannerNav(1);}});
-if(location.hash==='#planner'){plannerDateStr=kstDay();openTodo()}
+openWidgetLink();window.addEventListener('hashchange',openWidgetLink);
 window.addEventListener('resize',function(){if(plannerDateStr&&document.getElementById('plannerView').classList.contains('on'))drawClock(plannerDateStr)});
 })();
