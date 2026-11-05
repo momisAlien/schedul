@@ -1,4 +1,12 @@
 :root{color-scheme:dark;--bg1:#111416;--bg2:#191d20;--bg3:#202528;--bg4:#282f32;--bg5:#323a3e;--tx1:#e8edeb;--tx2:#a0aaa8;--tx3:#7d8b88;--bd1:#2d3538;--bd2:#46534f;--ac1:#688f87;--ac2:#87a79f;--ac1g:rgba(104,143,135,.14);--todBg:rgba(104,143,135,.08);--sh1:0 4px 18px rgba(0,0,0,.08);--sh2:0 12px 40px rgba(0,0,0,.18);--sun:#b98d87;--sat:#8d9fb7;--r3:18px;--r4:20px}
+.pl-backlog-pager{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:12px 0}
+.pl-backlog-pager>div{text-align:center}.pl-backlog-pager strong{font-size:15px;font-weight:600}.pl-backlog-pager span{display:block;font-size:11px;color:var(--tx2);margin-top:6px}
+.pl-backlog-pager button{width:44px;height:44px;border-radius:10px;border:1px solid var(--bd1);background:var(--bg3);color:var(--tx1);font-size:22px}.pl-backlog-pager button:disabled{opacity:.25;cursor:default}
+.pl-backlog-page{max-height:300px;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y}
+.pl-backlog-page .pl-backlog-item{width:100%;text-align:left;font:inherit;color:var(--tx1);min-height:52px}.pl-backlog-text{display:block}
+.pl-legend .pl-plan-dot{filter:none;width:9px;height:9px}
+.widget-link{text-decoration:none;font-size:12px;white-space:nowrap}
+@media(max-width:768px){.widget-link{grid-column:1;grid-row:3;justify-self:start}}
 [data-theme=light]{color-scheme:light;--bg1:#f4f5f2;--bg2:#fff;--bg3:#f5f6f3;--bg4:#e9ede8;--bg5:#dce3dc;--tx1:#263530;--tx2:#61736a;--tx3:#829088;--bd1:#e0e6df;--bd2:#bfccc1;--ac1:#4b7568;--ac2:#709286;--ac1g:rgba(75,117,104,.1);--todBg:rgba(75,117,104,.06);--sh1:0 4px 20px rgba(35,55,42,.025);--sun:#a57670;--sat:#73859b;--modal-bg:#fff}
 body{font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;letter-spacing:-.02em;cursor:auto}
 button,[role=button],.co,.dc,.pl-mcal-day{cursor:pointer}
